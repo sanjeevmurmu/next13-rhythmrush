@@ -4,6 +4,8 @@ import { Song } from "@/types";
 import useOnPlay from "@/hooks/useOnPlay";
 import SongItem from "@/components/SongItem";
 
+
+
 interface PageContentProps {
   songs: Song[];
 }
@@ -13,6 +15,9 @@ const PageContent: React.FC<PageContentProps> = ({
 }) => {
   const onPlay = useOnPlay(songs);
 
+
+
+
   if (songs.length === 0) {
     return (
       <div className="mt-4 text-neutral-400">
@@ -20,6 +25,7 @@ const PageContent: React.FC<PageContentProps> = ({
       </div>
     )
   }
+
 
   return ( 
     <div 
