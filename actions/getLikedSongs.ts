@@ -18,6 +18,7 @@ const getLikedSongs = async (): Promise<Song[]> => {
     .order('created_at', { ascending: false })
 
   if (!data) return [];
+  
 
   return data.map((item) => ({
     ...item.songs

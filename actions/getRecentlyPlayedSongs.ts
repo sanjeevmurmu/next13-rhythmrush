@@ -11,16 +11,34 @@ const getRecentlyPlayedSongs = async (): Promise<Song[]> => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data } = await supabase 
-    .from('recently_played')
-    .select('recent_songs')
-    .eq('user_id', session?.user?.id)
+
+  
+  const { data:ids } = await supabase 
+  .from('recently_played')
+  .select('recent_songs')
+  .eq('user_id', session?.user?.id)
+    
+  
+  
+  console.log(ids)
+  
+  if (!ids) return [];
+  
+  const { data:SongsData, error } = await supabase
+  .from('songs')
+    .select('*')
+    .in('id',ids[0]["recent_songs"])
     .order('created_at', { ascending: false })
+    
+  console.log(SongsData)
+    if (error) {
+      console.log(error.message);
+    }
 
-  if (!data) return [];
+  if (!SongsData) return [];
 
-  return data.map((item) => ({
-    ...item.recent_songs
+  return SongsData.map((item) => ({
+    ...item as Song
   }))
 };
 

@@ -3,12 +3,13 @@ import Image from "next/image";
 import getLikedSongs from "@/actions/getLikedSongs";
 import Header from "@/components/Header";
 
-import LikedContent from "./components/RecentlyPlayedContent";
+import RecentlyPlayedContent from "./components/RecentlyPlayedContent";
+import getRecentlyPlayedSongs from "@/actions/getRecentlyPlayedSongs";
 
 export const revalidate = 0;
 
-const Liked = async () => {
-  const songs = await getLikedSongs();
+const RecentlyPlayed = async () => {
+  const songs = await getRecentlyPlayedSongs();
 
   return (
     <div 
@@ -36,7 +37,7 @@ const Liked = async () => {
               <Image
                 className="object-cover"
                 fill
-                src="/images/liked.png"
+                src="/images/recently.jpg"
                 alt="Playlist"
               />
             </div>
@@ -53,15 +54,15 @@ const Liked = async () => {
                   font-bold
                 "
               >
-                Liked Songs
+                Recently Played
               </h1>
             </div>
           </div>
         </div>
       </Header>
-      <LikedContent songs={songs} />
+      <RecentlyPlayedContent songs={songs} />
     </div>
   );
 }
 
-export default Liked;
+export default RecentlyPlayed;
