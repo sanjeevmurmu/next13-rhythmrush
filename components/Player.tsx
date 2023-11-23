@@ -51,6 +51,7 @@ const Player = () => {
   if(error){
     console.log(error)
   }
+  // @ts-ignore
   setRecData([id,...rpData[0].recent_songs]);
 
 };
