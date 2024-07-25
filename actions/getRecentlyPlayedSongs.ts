@@ -14,9 +14,9 @@ const getRecentlyPlayedSongs = async (): Promise<Song[]> => {
 
   
   const { data:ids } = await supabase 
-  .from('recently_played')
+  .from('users')
   .select('recent_songs')
-  .eq('user_id', session?.user?.id)
+  .eq('id', session?.user?.id)
     
   
   

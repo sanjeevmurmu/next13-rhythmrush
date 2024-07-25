@@ -1,8 +1,12 @@
 import Header from "@/components/Header";
 
 import AccountContent from "./components/AccountContent";
+import getUserDetails from "@/actions/getUserDetails";
 
-const Account = () => {
+const Account = async() => {
+  const userDetail = await getUserDetails();
+  console.log(userDetail)
+
   return (
     <div 
       className="
@@ -21,7 +25,7 @@ const Account = () => {
           </h1>
         </div>
       </Header>
-      <AccountContent />
+      <AccountContent userDetail={userDetail}/>
     </div>
   )
 }

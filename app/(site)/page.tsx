@@ -1,3 +1,5 @@
+// starting page of the website
+
 import getSongs from "@/actions/getSongs";
 import Header from "@/components/Header";
 import ListItem from "@/components/ListItem";
@@ -7,7 +9,7 @@ import PageContent from "./components/PageContent";
 export const revalidate = 0;
 
 export default async function Home() {
-  const songs = await getSongs();
+  const songs = await getSongs(5);
 
   return (
     <div
@@ -20,6 +22,8 @@ export default async function Home() {
         overflow-y-auto
       "
     >
+      {/* shows the header buttons */}
+      {/* children to header passed recently played ,liked songs and some text */}
       <Header>
         <div className="mb-2">
           <h1 
@@ -54,6 +58,7 @@ export default async function Home() {
           </div>
         </div>
       </Header>
+      {/* PageContent shows all the songs in the library */}
       <div className="mt-2 mb-7 px-6">
         <div className="flex justify-between items-center">
           <h1 className="text-white text-2xl font-semibold">

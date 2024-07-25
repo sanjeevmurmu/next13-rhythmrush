@@ -1,3 +1,4 @@
+// server component to create checkout session for the premium subscription
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from "next/headers";
 import { NextResponse } from 'next/server';

@@ -43,14 +43,17 @@ export async function POST(
   if (relevantEvents.has(event.type)) {
     try {
       switch (event.type) {
+        // on getting a new subscrption option is added to stripe
         case 'product.created':
         case 'product.updated':
           await upsertProductRecord(event.data.object as Stripe.Product);
           break;
+          // on getting a new subscrption price is added to stripe
         case 'price.created':
         case 'price.updated':
           await upsertPriceRecord(event.data.object as Stripe.Price);
           break;
+          // on getting a custome is added to a sub option
         case 'customer.subscription.created':
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
@@ -61,6 +64,7 @@ export async function POST(
             event.type === 'customer.subscription.created'
           );
           break;
+          // once the customer exists checkout portal event and updates the sub status
         case 'checkout.session.completed':
           const checkoutSession = event.data
             .object as Stripe.Checkout.Session;

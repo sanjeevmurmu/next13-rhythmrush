@@ -8,8 +8,14 @@ import { useUser } from "@/hooks/useUser";
 import Button from "@/components/Button";
 import useSubscribeModal from "@/hooks/useSubscribeModal";
 import { postData } from "@/libs/helpers";
+import { UserDetails } from "@/types";
 
-const AccountContent = () => {
+interface AccountContentProps {
+  userDetail: UserDetails;
+};
+
+
+const AccountContent: React.FC<AccountContentProps> = ({userDetail}) => {
   const router = useRouter();
   const subscribeModal = useSubscribeModal();
   const { isLoading, subscription, user } = useUser();
@@ -34,9 +40,14 @@ const AccountContent = () => {
     }
     setLoading(false);
   };
-
+  console.log(userDetail)
   return ( 
     <div className="mb-7 px-6">
+      <div className="mb-5">
+
+      <span className="text-white text-3xl font-semibold">Name  </span>
+      <span className="text-white text-2xl font-semibold">{userDetail.full_name}</span>
+      </div>
       {!subscription && (
         <div className="flex flex-col gap-y-4">
         <p>No active plan.</p>

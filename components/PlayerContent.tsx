@@ -3,16 +3,18 @@
 import useSound from "use-sound";
 import { useEffect, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
+import { RxLoop } from "react-icons/rx";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { FaSpinner } from "react-icons/fa";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
-
+import { MdOutlineQueueMusic } from "react-icons/md";
 import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 
 import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
 import Slider from "./Slider";
+import useQueueSidebar from "@/store/useQueueSidebar";
 
 interface PlayerContentProps {
   song: Song;
@@ -25,7 +27,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-
+  const [loop, setLoop] = useState(false);
+  const [endValue, setendValue] = useState(false)
+  
+  const {isOpen,onClose,onOpen}=useQueueSidebar((state)=>state)
 
   const Icon = isLoading ? FaSpinner : isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
@@ -68,22 +73,23 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     },
     onend: () => {
       setIsPlaying(false);
-      onPlayNext();
-    },
+      setCurrentTime(0)
+      setendValue(true)
+      },
     onpause: () => setIsPlaying(false),
     format: ["mp3"],
   });
 
   useEffect(() => {
     sound?.play();
-    
+
     return () => {
       sound?.unload();
     };
   }, [sound]);
 
   const handlePlay = () => {
-    // console.log(sound);
+    console.log(sound);
     if (!isPlaying) {
       play();
     } else {
@@ -99,9 +105,28 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     }
   };
 
+  const handleSeek = (value:Number) => {
+    sound?.seek(value);
+  };
+
+
+  const handleloop=()=>{
+    const newLoop = !loop;
+    console.log(newLoop);
+    sound?.loop(newLoop);
+    setLoop(newLoop);
+  }
+
+  const handleQueue=()=>{
+    if(isOpen){
+      onClose()
+    }
+    else{
+      onOpen()
+    }
+  }
 
   const formatTime = (miliseconds: number, updating: boolean) => {
-    // console.log(miliseconds)
     let seconds = miliseconds;
     if (!updating) {
       seconds = miliseconds / 1000;
@@ -120,13 +145,15 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
       .toString()
       .padStart(2, "0")}`;
   };
+  
 
-  const handleSeek=(value)=>{
-    sound?.seek(value)
-  }
-
+  
   useEffect(() => {
-    let timer;
+   
+    if(endValue && !isPlaying && !loop){
+      onPlayNext()
+    }
+    let timer: string | number | NodeJS.Timer | undefined;
     if (isPlaying) {
       timer = setInterval(() => {
         setCurrentTime((time) => time + 1);
@@ -134,16 +161,29 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     }
     return () => {
       clearInterval(timer);
+      setendValue(false)
     };
-  }, [isPlaying]);
+  }, [isPlaying,endValue]);
+
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-7 h-full">
-      <div className="flex w-full justify-start col-span-3">
-        <div className="flex items-center gap-x-4">
-          <MediaItem data={song} />
+    <div className="grid grid-cols-2 md:grid-cols-3 h-full relative">
+      <div className="flex w-full justify-start ">
+        <div className="flex items-center gap-x-3">
+          <MediaItem data={song} ImgclassName="md:scale-[1.5] mb-4 mr-3" />
           <LikeButton songId={song.id} />
         </div>
+      </div>
+      {/* mobile view */}
+      <div className="md:hidden group absolute flex items-center w-screen top-0 left-0 translate-y-[-35px] translate-x-[-14px]">
+        <div className="opacity-0 text-sm w-12 transition absolute top-[-20px] left-0 z-10 translate-y-[20px] translate-x-[3px] group-focus:opacity-100 focus:opacity-100">{formatTime(currentTime, true)}</div>
+        <Slider
+          value={currentTime}
+          defaultValue={1000}
+          max={Math.floor(duration as number / 1000)}
+          onChange={(value) => {setCurrentTime(value); handleSeek(value)}}
+        />
+        <div className="opacity-0  text-sm w-12 transition absolute top-[-20px] right-0 z-10 translate-y-[20px] translate-x-[3px] group-focus:opacity-100 focus:opacity-100">{formatTime(duration as number, false)}</div>
       </div>
       <div
         className="
@@ -155,6 +195,26 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             items-center
           "
       >
+        <RxLoop
+      onClick={handleloop}
+      size={15}
+      className={`
+      ${loop?"text-white":"text-neutral-400"} 
+          cursor-pointer 
+          hover:text-white 
+          transition
+          mr-4
+        `}/> 
+        <MdOutlineQueueMusic
+      onClick={handleQueue}
+      size={15}
+      className={`
+      ${loop?"text-white":"text-neutral-400"} 
+          cursor-pointer 
+          hover:text-white 
+          transition
+          mr-4
+        `}/> 
         <div
           onClick={handlePlay}
           className="
@@ -172,24 +232,44 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
           <Icon size={30} className="text-black" />
         </div>
       </div>
-
+     {/* desktop view */}
       <div
         className="
             hidden
             h-full
             md:flex 
+            flex-col
             justify-center 
             items-center 
             w-full 
             max-w-[722px] 
-            gap-x-6
-          "
+            "
       >
+        <div className="md:flex justify-center items-center max-w-[722px] gap-x-6">
+        <RxLoop
+          onClick={handleloop}
+          size={15}
+          className={`
+          ${loop?"text-white":"text-neutral-400"} 
+              cursor-pointer 
+              hover:text-white 
+              transition
+            `}/> 
+             <MdOutlineQueueMusic
+      onClick={handleQueue}
+      size={15}
+      className={`
+      ${loop?"text-white":"text-neutral-400"} 
+          cursor-pointer 
+          hover:text-white 
+          transition
+          mr-4
+        `}/> 
         <AiFillStepBackward
           onClick={onPlayPrevious}
           size={30}
           className="
-              text-neutral-400 
+          text-neutral-400 
               cursor-pointer 
               hover:text-white 
               transition
@@ -215,24 +295,25 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
           onClick={onPlayNext}
           size={30}
           className="
-              text-neutral-400 
-              cursor-pointer 
-              hover:text-white 
-              transition
-            "
-        />
-      </div>
-      <div className="p-2 flex items-center gap-x-2 w-[400px]">
+          text-neutral-400 
+          cursor-pointer 
+          hover:text-white 
+          transition
+          "
+          />
+          </div>
+          <div className="flex items-center gap-x-2 w-[400px]">
         <div className="text-xs w-12">{formatTime(currentTime, true)}</div>
         <Slider
           value={currentTime}
           defaultValue={1000}
-          max={Math.floor(duration / 1000)}
+          max={Math.floor(duration as number / 1000)}
           onChange={(value) => {setCurrentTime(value); handleSeek(value)}}
         />
-        <div className="text-xs w-12">{formatTime(duration, false)}</div>
+        <div className="text-xs w-12">{formatTime(duration as number, false)}</div>
       </div>
-      <div className="hidden md:flex w-full justify-end pr-2 col-end-8">
+      </div>
+      <div className="hidden md:flex w-full justify-end pr-2 ">
         <div className="flex items-center gap-x-2 w-[120px]">
           <VolumeIcon
             onClick={toggleMute}

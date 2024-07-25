@@ -1,3 +1,5 @@
+// header component of the main page
+
 "use client";
 
 import { twMerge } from "tailwind-merge";
@@ -53,6 +55,7 @@ const Header: React.FC<HeaderProps> = ({
       )}>
       <div className="w-full mb-4 flex items-center justify-between">
         <div className="hidden md:flex gap-x-2 items-center">
+          {/* left button for navigating back shown on devices bigger than md*/}
           <button 
             onClick={() => router.back()} 
             className="
@@ -68,6 +71,8 @@ const Header: React.FC<HeaderProps> = ({
           >
             <RxCaretLeft className="text-white" size={35} />
           </button>
+
+          {/* Right button for navigating to go forward shown on devices bigger than md*/}
           <button 
             onClick={() => router.forward()} 
             className="
@@ -83,6 +88,8 @@ const Header: React.FC<HeaderProps> = ({
           >
             <RxCaretRight className="text-white" size={35} />
           </button>
+
+          {/* button for going to home page only shown on devices sizes less than medium display  */}
         </div>
         <div className="flex md:hidden gap-x-2 items-center">
           <button 
@@ -101,6 +108,8 @@ const Header: React.FC<HeaderProps> = ({
           >
             <HiHome className="text-black" size={20} />
           </button>
+
+          {/* button for going to search page only shown on devices sizes less than medium display */}
           <button 
             onClick={() => router.push('/search')} 
             className="
@@ -113,11 +122,12 @@ const Header: React.FC<HeaderProps> = ({
               cursor-pointer 
               hover:opacity-75 
               transition
-            "
-          >
+            ">
             <BiSearch className="text-black" size={20} />
           </button>
         </div>
+        
+        {/* shows sign in and login if no user is there and if user is there logout and a button to navigate to account page */}
         <div className="flex justify-between items-center gap-x-4">
           {user ? (
             <div className="flex gap-x-4 items-center">

@@ -1,3 +1,4 @@
+// if error occurs when loading of page automatically inovked
 "use client";
 
 import Box from "@/components/Box";

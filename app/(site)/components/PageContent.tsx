@@ -1,3 +1,5 @@
+// shows all the songs fetched from the db
+// #TODO fetch only recently 5 uploaded songs
 "use client";
 
 import { Song } from "@/types";
@@ -13,6 +15,7 @@ interface PageContentProps {
 const PageContent: React.FC<PageContentProps> = ({
   songs
 }) => {
+// calls hook useOnPlay to pass the all songs in the context
   const onPlay = useOnPlay(songs);
 
 
@@ -41,6 +44,7 @@ const PageContent: React.FC<PageContentProps> = ({
         mt-4
       "
     >
+      {/* mapping each song on a song item to show their details and onclick passing the song id  to the onPlay function in useOnPlay hook*/}
       {songs.map((item) => (
         <SongItem 
           onClick={(id: string) => onPlay(id)} 

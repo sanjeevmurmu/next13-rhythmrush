@@ -44,9 +44,9 @@ const Player = () => {
   }
   // console.log('handle', recData);
   const { data:rpData, error } = await supabaseClient
-    .from('recently_played')
+    .from('users')
     .select('recent_songs')
-    .eq('user_id', user?.id);
+    .eq('id', user?.id);
   // console.log("handle", rpData, error);
   if(error){
     console.log(error)
@@ -60,9 +60,9 @@ const sendData = async () => {
   console.log("recData updated:", recData);
   
   const { data, error } = await supabaseClient
-  .from('recently_played')
+  .from('users')
   .update({ recent_songs: recData })
-  .eq('user_id', user?.id)
+  .eq('id', user?.id)
   .select()
           
   if (error) {

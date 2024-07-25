@@ -1,3 +1,5 @@
+// loading page automatically invoked when the page is loading
+
 "use client";
 
 import { BounceLoader } from "react-spinners";
