@@ -1,3 +1,5 @@
+import { Song } from "@/types";
+
 interface Item {
     [x: string]: any;
   }
@@ -22,5 +24,5 @@ export function customSort(arr:Item[], order:string[]) {
         
         // If neither ID is in the orderArray, maintain their original order
         return 0;
-      });
+      }) as Song[];
   }

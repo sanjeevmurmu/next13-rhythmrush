@@ -207,10 +207,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
             items-center
           "
       >
-        <div className="relative">
-        {looptype==1 && <TbCircle1Filled size={6} className=" absolute text-white right-0"/>}
+        <div className="relative" onClick={handleloop}>
+        {looptype==1 && <TbCircle1Filled size={10} className=" absolute text-white"/>}
         <RxLoop
-      onClick={handleloop}
       size={15}
       className={`
       ${looptype!==0?"text-white":"text-neutral-400"} 
@@ -261,10 +260,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
             "
       >
         <div className="md:flex justify-center items-center max-w-[722px] gap-x-6">
-        <div className="relative">
-        {looptype==1 && <TbCircle1Filled size={6} className=" absolute text-white right-0"/>}
+        <div className="relative" onClick={handleloop}>
+        {looptype==1 && <TbCircle1Filled size={10} className=" absolute text-white right-0"/>}
         <RxLoop
-          onClick={handleloop}
           size={15}
           className={`
             ${looptype!==0?"text-white":"text-neutral-400"} 

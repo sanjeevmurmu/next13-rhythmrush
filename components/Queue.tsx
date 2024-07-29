@@ -11,28 +11,23 @@ import { HiBars2 } from "react-icons/hi2";
 interface QueueProps {
     activeId:string
     allSongs:Song[]
-    setIds:(ids:string[])=>void
+    onReorder:(newOrder:Song[])=>void
 }
 
-const Queue = ({activeId,allSongs,setIds}: QueueProps) => {
+const Queue = ({activeId,allSongs,onReorder}: QueueProps) => {
 
     const { isOpen, onClose } = useQueueSidebar((state) => state)
     
-    const [queueSongs,setQueueSongs]=useState(allSongs)
  
-    
-    useEffect(()=>{
-        setQueueSongs(allSongs)
-    },[allSongs])
-
-    const handleReorder = useCallback((newOrder: Song[]) => {
-        setIds(newOrder.map((song) => song.id));
-    }, [setIds]);
+    const handleReorder = (newOrder: Song[]) => {
+        // console.log("Reordering in Queue component. New order:", newOrder.map(song => song.id));
+        onReorder(newOrder);
+    };
 
     const handleRemove = (item: Song) => {
-        const newSongs=queueSongs.filter((song) => song.id !== item.id)
-        setQueueSongs(newSongs);
-        setIds(newSongs.map((song) => song.id));
+        const newSongs = allSongs.filter((song) => song.id !== item.id);
+        // console.log("Removing song from Queue. New order:", newSongs.map(song => song.id));
+        onReorder(newSongs);
     };
 
 
@@ -55,8 +50,8 @@ const Queue = ({activeId,allSongs,setIds}: QueueProps) => {
                     className="text-neutral-400 cursor-pointer hover:text-white            transition"/>
             </div>
             <div className="flex flex-col gap-y-2 mt-4 px-3">
-                <Reorder.Group axis="y" values={queueSongs} onReorder={handleReorder}>
-                    {queueSongs.map((item) => (
+                <Reorder.Group axis="y" values={allSongs} onReorder={handleReorder}>
+                    {allSongs.map((item) => (
                         <Reorder.Item key={item.id} value={item} className='flex justify-between hover:bg-green-600 active:bg-green-600 rounded-md'>
                             <MediaItem
                                 data={item}

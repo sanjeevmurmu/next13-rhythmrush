@@ -1,7 +1,7 @@
 "use client";
 
 import {useSessionContext } from "@supabase/auth-helpers-react";
-import { useState} from "react";
+import { useEffect, useState,useCallback} from "react";
 
 import usePlayer from "@/hooks/usePlayer";
 import useLoadSongUrl from "@/hooks/useLoadSongUrl";
@@ -13,6 +13,7 @@ import PlayerContent from "./PlayerContent";
 import Queue from "./Queue";
 import useGetSongByIds from "@/hooks/useGetSongByIds";
 import SendRecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
+import { Song } from "@/types";
 
 type LoopType=0|1|2
 
@@ -31,23 +32,30 @@ const Player = () => {
   const songUrl = useLoadSongUrl(song!);
 
   const [looptype, setLoopType] = useState<LoopType>(0);
+  const [orderedSongs,setOrderedSongs]=useState(songs)
 
+  useEffect(()=>{
+    if(songs){
+      setOrderedSongs(songs)
+    }
+  },[songs])
 
-if (!song || !songUrl || !player.activeId||!songs) {
+  const onReorder=useCallback((newOrder:Song[])=>{
+    setOrderedSongs(newOrder)
+    player.setIds(newOrder.map(song=>song.id))
+  },[player])
+
+if (!song || !songUrl || !player.activeId||!orderedSongs) {
   return null;
 }
 
-let allSongs
-if(looptype==1){
-  allSongs=songs.filter(song=>song.id===player.activeId)
-}
-else{
-  allSongs=songs
-}
+let allSongs = looptype === 1 
+    ? orderedSongs.filter(song => song.id === player.activeId)
+    : orderedSongs;
 
   return (
     <>
-    <Queue allSongs={allSongs} activeId={player.activeId} setIds={player.setIds} />
+    <Queue allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} />
     <div 
       className="
         fixed 
