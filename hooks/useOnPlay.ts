@@ -11,7 +11,7 @@ const useOnPlay = (songs: Song[]) => {
   const authModal = useAuthModal();
   const { subscription, user } = useUser();
 
-  const onPlay = (id: string) => {
+  const onPlay = (playingid: string) => {
     // console.log(id)
     if (!user) {
       return authModal.onOpen();
@@ -21,8 +21,14 @@ const useOnPlay = (songs: Song[]) => {
     //   return subscribeModal.onOpen();
     // }
 
-    player.setId(id);
-    player.setIds(songs.map((song) => song.id));
+    player.setId(playingid)
+  
+    let allsongs=songs.map((song)=>song.id)
+    let prevsongs=allsongs.slice(0,allsongs.indexOf(playingid)+1).reverse()
+    let nextsongs=allsongs.slice(allsongs.indexOf(playingid)+1,allsongs.length)
+    allsongs=prevsongs.concat(nextsongs)  
+    player.setIds([...allsongs]);
+    
   }
 
   return onPlay;

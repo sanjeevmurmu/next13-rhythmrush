@@ -6,6 +6,7 @@ import useLoadImage from "@/hooks/useLoadImage";
 import { Song } from "@/types";
 
 import PlayButton from "./PlayButton";
+import usePlayer from "@/hooks/usePlayer";
 
 interface SongItemProps {
   data: Song;
@@ -17,6 +18,7 @@ const SongItem: React.FC<SongItemProps> = ({
   onClick
 }) => {
   const imagePath = useLoadImage(data);
+
 
   return ( 
     <div

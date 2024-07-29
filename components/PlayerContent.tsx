@@ -89,7 +89,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   }, [sound]);
 
   const handlePlay = () => {
-    console.log(sound);
+    // console.log(sound);
     if (!isPlaying) {
       play();
     } else {
@@ -112,7 +112,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
 
   const handleloop=()=>{
     const newLoop = !loop;
-    console.log(newLoop);
+    // console.log(newLoop);
     sound?.loop(newLoop);
     setLoop(newLoop);
   }

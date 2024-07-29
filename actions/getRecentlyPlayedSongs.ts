@@ -20,7 +20,7 @@ const getRecentlyPlayedSongs = async (): Promise<Song[]> => {
     
   
   
-  console.log(ids)
+  // console.log(ids)
   
   if (!ids) return [];
   
@@ -30,7 +30,7 @@ const getRecentlyPlayedSongs = async (): Promise<Song[]> => {
     .in('id',ids[0]["recent_songs"])
     .order('created_at', { ascending: false })
     
-  console.log(SongsData)
+  // console.log(SongsData)
     if (error) {
       console.log(error.message);
     }

@@ -40,7 +40,7 @@ const AccountContent: React.FC<AccountContentProps> = ({userDetail}) => {
     }
     setLoading(false);
   };
-  console.log(userDetail)
+  // console.log(userDetail)
   return ( 
     <div className="mb-7 px-6">
       <div className="mb-5">

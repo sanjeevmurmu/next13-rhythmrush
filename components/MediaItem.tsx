@@ -10,7 +10,7 @@ import usePlayer from "@/hooks/usePlayer";
 interface MediaItemProps {
   data: Song;
   onClick?: (id: string) => void;
-  ImgclassName?:string
+  ImgclassName?:string;
 }
 
 const MediaItem: React.FC<MediaItemProps> = ({
@@ -22,6 +22,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
   const imageUrl = useLoadImage(data);
 
   const handleClick = () => {
+
     if (onClick) {
       return onClick(data.id);
     }
@@ -32,7 +33,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
   return ( 
     <div
       onClick={handleClick}
-      className="
+      className={twMerge(`
         flex 
         items-center 
         gap-x-3 
@@ -41,7 +42,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
         w-full 
         p-2 
         rounded-md
-      "
+      `)}
     >
       <div 
         className={twMerge(`relative 

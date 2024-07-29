@@ -5,7 +5,7 @@ import getUserDetails from "@/actions/getUserDetails";
 
 const Account = async() => {
   const userDetail = await getUserDetails();
-  console.log(userDetail)
+  // console.log(userDetail)
 
   return (
     <div 

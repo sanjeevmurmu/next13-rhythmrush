@@ -1,7 +1,7 @@
 "use client";
 
 import {useSessionContext } from "@supabase/auth-helpers-react";
-import { useState,useEffect } from "react";
+import { useState,useEffect, useMemo } from "react";
 
 import usePlayer from "@/hooks/usePlayer";
 import useLoadSongUrl from "@/hooks/useLoadSongUrl";
@@ -10,6 +10,9 @@ import { useUser } from "@/hooks/useUser";
 import useAuthModal from "@/hooks/useAuthModal";
 
 import PlayerContent from "./PlayerContent";
+import Queue from "./Queue";
+import useGetSongByIds from "@/hooks/useGetSongByIds";
+import { Song } from "@/types";
 
 const Player = () => {
 
@@ -19,10 +22,14 @@ const Player = () => {
 
   const player = usePlayer();
   const { song } = useGetSongById(player.activeId);
-
+  const { songs } =useGetSongByIds(player.ids)
+  
   const songUrl = useLoadSongUrl(song!);
 
   const [recData, setRecData] = useState([]);
+
+
+
 
   useEffect(() => {
     if (!user?.id) {
@@ -57,7 +64,7 @@ const Player = () => {
 };
 
 const sendData = async () => {
-  console.log("recData updated:", recData);
+  // console.log("recData updated:", recData);
   
   const { data, error } = await supabaseClient
   .from('users')
@@ -72,11 +79,13 @@ const sendData = async () => {
   }
 };
 
-if (!song || !songUrl || !player.activeId) {
+if (!song || !songUrl || !player.activeId||!songs) {
   return null;
 }
 
   return (
+    <>
+    <Queue allSongs={songs} activeId={player.activeId} setIds={player.setIds} />
     <div 
       className="
         fixed 
@@ -90,6 +99,7 @@ if (!song || !songUrl || !player.activeId) {
     >
       <PlayerContent key={songUrl} song={song} songUrl={songUrl} />
     </div>
+    </>
   );
 }
 
