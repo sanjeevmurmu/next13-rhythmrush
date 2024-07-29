@@ -1,7 +1,7 @@
 "use client";
 
 import useSound from "use-sound";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { RxLoop } from "react-icons/rx";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
@@ -10,6 +10,7 @@ import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { MdOutlineQueueMusic } from "react-icons/md";
 import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
+import { TbCircle1Filled } from "react-icons/tb";
 
 import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
@@ -19,31 +20,33 @@ import useQueueSidebar from "@/store/useQueueSidebar";
 interface PlayerContentProps {
   song: Song;
   songUrl: string;
+  looptype:number
+  setLoopType:Dispatch<SetStateAction<0|1|2>>
+
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
+const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType }) => {
   const player = usePlayer();
   const [volume, setVolume] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-  const [loop, setLoop] = useState(false);
   const [endValue, setendValue] = useState(false)
-  
   const {isOpen,onClose,onOpen}=useQueueSidebar((state)=>state)
 
   const Icon = isLoading ? FaSpinner : isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
+  
 
   const onPlayNext = () => {
-    if (player.ids.length === 0) {
+    if (player.ids.length === 0 || looptype==1) {
       return;
     }
 
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
     const nextSong = player.ids[currentIndex + 1];
 
-    if (!nextSong) {
+    if (!nextSong && looptype!==0) {
       return player.setId(player.ids[0]);
     }
 
@@ -51,14 +54,15 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   };
 
   const onPlayPrevious = () => {
-    if (player.ids.length === 0) {
+    if (player.ids.length === 0 || looptype==1) {
       return;
     }
+
 
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
     const previousSong = player.ids[currentIndex - 1];
 
-    if (!previousSong) {
+    if (!previousSong && looptype!==0) {
       return player.setId(player.ids[player.ids.length - 1]);
     }
 
@@ -111,10 +115,18 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
 
 
   const handleloop=()=>{
-    const newLoop = !loop;
-    // console.log(newLoop);
-    sound?.loop(newLoop);
-    setLoop(newLoop);
+    if(looptype==0){
+      setLoopType(1)
+      sound?.loop(true)
+    }
+    else if(looptype==1){
+      setLoopType(2)
+      sound?.loop(false)
+    }
+    else{
+      setLoopType(0)
+      sound?.loop(false)
+    }
   }
 
   const handleQueue=()=>{
@@ -150,7 +162,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   
   useEffect(() => {
    
-    if(endValue && !isPlaying && !loop){
+    if(endValue && !isPlaying && looptype!==1){
       onPlayNext()
     }
     let timer: string | number | NodeJS.Timer | undefined;
@@ -195,21 +207,24 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             items-center
           "
       >
+        <div className="relative">
+        {looptype==1 && <TbCircle1Filled size={6} className=" absolute text-white right-0"/>}
         <RxLoop
       onClick={handleloop}
       size={15}
       className={`
-      ${loop?"text-white":"text-neutral-400"} 
+      ${looptype!==0?"text-white":"text-neutral-400"} 
           cursor-pointer 
           hover:text-white 
           transition
           mr-4
-        `}/> 
+          `}/> 
+        </div>
         <MdOutlineQueueMusic
       onClick={handleQueue}
       size={15}
       className={`
-      ${loop?"text-white":"text-neutral-400"} 
+      ${isOpen?"text-white":"text-neutral-400"} 
           cursor-pointer 
           hover:text-white 
           transition
@@ -246,20 +261,23 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             "
       >
         <div className="md:flex justify-center items-center max-w-[722px] gap-x-6">
+        <div className="relative">
+        {looptype==1 && <TbCircle1Filled size={6} className=" absolute text-white right-0"/>}
         <RxLoop
           onClick={handleloop}
           size={15}
           className={`
-          ${loop?"text-white":"text-neutral-400"} 
-              cursor-pointer 
-              hover:text-white 
-              transition
+            ${looptype!==0?"text-white":"text-neutral-400"} 
+            cursor-pointer 
+            hover:text-white 
+            transition
             `}/> 
+          </div>
              <MdOutlineQueueMusic
       onClick={handleQueue}
       size={15}
       className={`
-      ${loop?"text-white":"text-neutral-400"} 
+      ${isOpen?"text-white":"text-neutral-400"} 
           cursor-pointer 
           hover:text-white 
           transition

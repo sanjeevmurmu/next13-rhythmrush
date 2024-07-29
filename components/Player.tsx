@@ -1,7 +1,7 @@
 "use client";
 
 import {useSessionContext } from "@supabase/auth-helpers-react";
-import { useState,useEffect, useMemo } from "react";
+import { useState} from "react";
 
 import usePlayer from "@/hooks/usePlayer";
 import useLoadSongUrl from "@/hooks/useLoadSongUrl";
@@ -13,6 +13,8 @@ import PlayerContent from "./PlayerContent";
 import Queue from "./Queue";
 import useGetSongByIds from "@/hooks/useGetSongByIds";
 import SendRecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
+
+type LoopType=0|1|2
 
 const Player = () => {
 
@@ -28,17 +30,24 @@ const Player = () => {
   
   const songUrl = useLoadSongUrl(song!);
 
-
-
+  const [looptype, setLoopType] = useState<LoopType>(0);
 
 
 if (!song || !songUrl || !player.activeId||!songs) {
   return null;
 }
 
+let allSongs
+if(looptype==1){
+  allSongs=songs.filter(song=>song.id===player.activeId)
+}
+else{
+  allSongs=songs
+}
+
   return (
     <>
-    <Queue allSongs={songs} activeId={player.activeId} setIds={player.setIds} />
+    <Queue allSongs={allSongs} activeId={player.activeId} setIds={player.setIds} />
     <div 
       className="
         fixed 
@@ -50,7 +59,7 @@ if (!song || !songUrl || !player.activeId||!songs) {
         px-4
       " 
     >
-      <PlayerContent key={songUrl} song={song} songUrl={songUrl} />
+      <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} />
     </div>
     </>
   );
