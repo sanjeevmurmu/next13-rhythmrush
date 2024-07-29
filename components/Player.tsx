@@ -12,7 +12,7 @@ import useAuthModal from "@/hooks/useAuthModal";
 import PlayerContent from "./PlayerContent";
 import Queue from "./Queue";
 import useGetSongByIds from "@/hooks/useGetSongByIds";
-import { Song } from "@/types";
+import SendRecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
 
 const Player = () => {
 
@@ -23,61 +23,14 @@ const Player = () => {
   const player = usePlayer();
   const { song } = useGetSongById(player.activeId);
   const { songs } =useGetSongByIds(player.ids)
+
+  const {recdata}=SendRecentlyPlayedSong(player.activeId)
   
   const songUrl = useLoadSongUrl(song!);
 
-  const [recData, setRecData] = useState([]);
 
 
 
-
-  useEffect(() => {
-    if (!user?.id) {
-      return;
-    }
-    if (recData.length > 0) {
-      sendData();
-      // console.log('effect', recData);
-    }
-  }, [recData, user?.id]);
-
-  useEffect(() => {
-    fetchData(player.activeId);
-  }, [player.activeId]);
-
- const fetchData = async (id: any) => {
-  if (!user) {
-    return authModal.onOpen();
-  }
-  // console.log('handle', recData);
-  const { data:rpData, error } = await supabaseClient
-    .from('users')
-    .select('recent_songs')
-    .eq('id', user?.id);
-  // console.log("handle", rpData, error);
-  if(error){
-    console.log(error)
-  }
-  // @ts-ignore
-  setRecData([id,...rpData[0].recent_songs]);
-
-};
-
-const sendData = async () => {
-  // console.log("recData updated:", recData);
-  
-  const { data, error } = await supabaseClient
-  .from('users')
-  .update({ recent_songs: recData })
-  .eq('id', user?.id)
-  .select()
-          
-  if (error) {
-    console.log(error)
-  } else {
-    // console.log(recData,'    ',data);
-  }
-};
 
 if (!song || !songUrl || !player.activeId||!songs) {
   return null;

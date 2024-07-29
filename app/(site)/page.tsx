@@ -53,7 +53,7 @@ export default async function Home() {
             <ListItem 
               name="Recently Played" 
               image="/images/recently.jpg" 
-              href="recentlyPlayed" 
+              href="recentlyplayed" 
             />
           </div>
         </div>
