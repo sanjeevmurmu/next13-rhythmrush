@@ -5,6 +5,8 @@
 import { Song } from "@/types";
 import useOnPlay from "@/hooks/useOnPlay";
 import SongItem from "@/components/SongItem";
+import useComponentMouseEvents from "@/hooks/useMouseEvents";
+import { useMouseEventsContext } from "@/providers/MouseEventsProvider";
 
 
 
@@ -17,7 +19,8 @@ const PageContent: React.FC<PageContentProps> = ({
 }) => {
 // calls hook useOnPlay to pass the all songs in the context
   const onPlay = useOnPlay(songs);
-
+  const { onMouseEvent } = useMouseEventsContext();
+  const ref = useComponentMouseEvents({ onMouseEvent });
 
 
 
@@ -43,6 +46,7 @@ const PageContent: React.FC<PageContentProps> = ({
         gap-4 
         mt-4
       "
+      ref={ref}
     >
       {/* mapping each song on a song item to show their details and onclick passing the song id  to the onPlay function in useOnPlay hook*/}
       {songs.map((item) => (

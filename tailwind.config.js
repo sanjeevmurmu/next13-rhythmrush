@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -12,7 +13,23 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      animation:{
+        runningtext:'runningtext 10s linear infinite',
+        fadein:'fadein 5s ease-in-out '
+      },
+      keyframes: {
+        runningtext: {
+          '0%': { transform:'translateX(0)' },
+          '100%': { transform: 'translateX(-54%)' },
+        },
+        fadein:{
+          '0%':{opacity:'0'},
+          '100%':{opacity:'1'}
+        },
+        
     },
+   
   },
   plugins: [],
+}
 }

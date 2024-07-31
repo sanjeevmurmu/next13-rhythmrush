@@ -3,7 +3,6 @@ import useQueueSidebar from "@/store/useQueueSidebar"
 import { Song } from "@/types"
 import MediaItem from "./MediaItem"
 import { BiX } from "react-icons/bi"
-import React, { useCallback, useEffect, useState } from 'react'
 import { Reorder } from 'framer-motion'
 import { HiBars2 } from "react-icons/hi2";
 
@@ -38,7 +37,7 @@ const Queue = ({activeId,allSongs,onReorder}: QueueProps) => {
     
 
     return (
-        <div className={`absolute inset-y-0 right-0 bg-black transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-scroll h-[87%] ${isOpen ? 'p-4 w-full md:w-1/3' : 'w-0'}`}>
+        <div className={`absolute inset-y-0 right-0 bg-black transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-scroll h-[88%] z-50 ${isOpen ? 'p-4 w-full md:w-1/3' : 'w-0'}`}>
             <div className="flex justify-between items-center">
                 <h1 className="
             text-white 

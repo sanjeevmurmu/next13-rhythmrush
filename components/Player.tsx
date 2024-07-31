@@ -15,6 +15,7 @@ import useGetSongByIds from "@/hooks/useGetSongByIds";
 import SendRecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
 import { Song } from "@/types";
 
+
 type LoopType=0|1|2
 
 const Player = () => {
@@ -31,6 +32,8 @@ const Player = () => {
   
   const songUrl = useLoadSongUrl(song!);
 
+  // console.log(isMouseOver)
+
   const [looptype, setLoopType] = useState<LoopType>(0);
   const [orderedSongs,setOrderedSongs]=useState(songs)
 
@@ -45,6 +48,8 @@ const Player = () => {
     player.setIds(newOrder.map(song=>song.id))
   },[player])
 
+
+
 if (!song || !songUrl || !player.activeId||!orderedSongs) {
   return null;
 }
@@ -55,20 +60,8 @@ let allSongs = looptype === 1
 
   return (
     <>
-    <Queue allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} />
-    <div 
-      className="
-        fixed 
-        bottom-0 
-        bg-black 
-        w-full 
-        py-2 
-        h-[80px] 
-        px-4
-      " 
-    >
-      <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} />
-    </div>
+    <Queue allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} />   
+    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} />
     </>
   );
 }

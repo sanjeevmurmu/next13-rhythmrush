@@ -16,6 +16,8 @@ import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
 import Slider from "./Slider";
 import useQueueSidebar from "@/store/useQueueSidebar";
+import AudioVisualizer from "./AudioVisualizer";
+import { useMouseEventsContext } from "@/providers/MouseEventsProvider";
 
 interface PlayerContentProps {
   song: Song;
@@ -32,6 +34,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [endValue, setendValue] = useState(false)
+  const [audio,setAudio]=useState<HTMLAudioElement|null>(null)
+
+  const { isMouseOver } = useMouseEventsContext();
+
   const {isOpen,onClose,onOpen}=useQueueSidebar((state)=>state)
 
   const Icon = isLoading ? FaSpinner : isPlaying ? BsPauseFill : BsPlayFill;
@@ -86,11 +92,16 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
   useEffect(() => {
     sound?.play();
-
+    if(sound){
+      console.log(sound)
+      setAudio(sound._sounds[0]._node);
+    }
     return () => {
       sound?.unload();
+      setAudio(null)
     };
   }, [sound]);
+
 
   const handlePlay = () => {
     // console.log(sound);
@@ -179,6 +190,19 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
 
   return (
+    <>
+    {!isMouseOver && <AudioVisualizer song={song} audioData={{ audio, isPlaying }}/>}
+    <div 
+      className="
+        fixed 
+        bottom-0 
+        bg-black 
+        w-full 
+        py-2 
+        h-[80px] 
+        px-4
+      " 
+    >
     <div className="grid grid-cols-2 md:grid-cols-3 h-full relative">
       <div className="flex w-full justify-start ">
         <div className="flex items-center gap-x-3">
@@ -199,66 +223,66 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
       </div>
       <div
         className="
-            flex 
-            md:hidden 
-            col-auto 
-            w-full 
-            justify-end 
-            items-center
-          "
-      >
+        flex 
+        md:hidden 
+        col-auto 
+        w-full 
+        justify-end 
+        items-center
+        "
+        >
         <div className="relative" onClick={handleloop}>
         {looptype==1 && <TbCircle1Filled size={10} className=" absolute text-white"/>}
         <RxLoop
       size={15}
       className={`
-      ${looptype!==0?"text-white":"text-neutral-400"} 
-          cursor-pointer 
-          hover:text-white 
-          transition
-          mr-4
+        ${looptype!==0?"text-white":"text-neutral-400"} 
+        cursor-pointer 
+        hover:text-white 
+        transition
+        mr-4
           `}/> 
         </div>
         <MdOutlineQueueMusic
       onClick={handleQueue}
       size={15}
       className={`
-      ${isOpen?"text-white":"text-neutral-400"} 
-          cursor-pointer 
+        ${isOpen?"text-white":"text-neutral-400"} 
+        cursor-pointer 
           hover:text-white 
           transition
           mr-4
-        `}/> 
+          `}/> 
         <div
           onClick={handlePlay}
           className="
-              h-10
-              w-10
-              flex 
-              items-center 
-              justify-center 
-              rounded-full 
-              bg-white 
-              p-1 
-              cursor-pointer
-            "
-        >
+          h-10
+          w-10
+          flex 
+          items-center 
+          justify-center 
+          rounded-full 
+          bg-white 
+          p-1 
+          cursor-pointer
+          "
+          >
           <Icon size={30} className="text-black" />
         </div>
       </div>
      {/* desktop view */}
       <div
         className="
-            hidden
-            h-full
-            md:flex 
-            flex-col
-            justify-center 
-            items-center 
-            w-full 
-            max-w-[722px] 
-            "
-      >
+        hidden
+        h-full
+        md:flex 
+        flex-col
+        justify-center 
+        items-center 
+        w-full 
+        max-w-[722px] 
+        "
+        >
         <div className="md:flex justify-center items-center max-w-[722px] gap-x-6">
         <div className="relative" onClick={handleloop}>
         {looptype==1 && <TbCircle1Filled size={10} className=" absolute text-white right-0"/>}
@@ -275,36 +299,36 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
       onClick={handleQueue}
       size={15}
       className={`
-      ${isOpen?"text-white":"text-neutral-400"} 
-          cursor-pointer 
-          hover:text-white 
-          transition
-          mr-4
+        ${isOpen?"text-white":"text-neutral-400"} 
+        cursor-pointer 
+        hover:text-white 
+        transition
+        mr-4
         `}/> 
         <AiFillStepBackward
           onClick={onPlayPrevious}
           size={30}
           className="
           text-neutral-400 
-              cursor-pointer 
-              hover:text-white 
-              transition
-            "
-        />
+          cursor-pointer 
+          hover:text-white 
+          transition
+          "
+          />
         <div
           onClick={handlePlay}
           className="
-              flex 
-              items-center 
-              justify-center
-              h-10
-              w-10 
-              rounded-full 
-              bg-white 
-              p-1 
-              cursor-pointer
+          flex 
+          items-center 
+          justify-center
+          h-10
+          w-10 
+          rounded-full 
+          bg-white 
+          p-1 
+          cursor-pointer
             "
-        >
+            >
           <Icon size={30} className="text-black" />
         </div>
         <AiFillStepForward
@@ -325,7 +349,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
           defaultValue={1000}
           max={Math.floor(duration as number / 1000)}
           onChange={(value) => {setCurrentTime(value); handleSeek(value)}}
-        />
+          />
         <div className="text-xs w-12">{formatTime(duration as number, false)}</div>
       </div>
       </div>
@@ -335,16 +359,18 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
             onClick={toggleMute}
             className="cursor-pointer"
             size={34}
-          />
+            />
           <Slider
             value={volume}
             onChange={(value) => setVolume(value)}
             defaultValue={1}
             max={1}
-          />
+            />
         </div>
       </div>
     </div>
+  </div>
+  </>
   );
 };
 
