@@ -45,10 +45,9 @@ const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
     <div className={`absolute 
           w-full
           h-full
-          overflow-hidden inset-0 flex justify-center audio-visual animate-fadein`} ref={componentRef} >
+          inset-0 flex justify-center audio-visual animate-fadein bg-black`} ref={componentRef} >
                   <div 
         className="
-          aspect-square 
           w-full
           h-full 
           overflow-hidden

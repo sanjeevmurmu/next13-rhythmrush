@@ -1,19 +1,21 @@
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
 let audioSource: AudioNode | null = null;
-const sprite=new Image()
-const sprite1=new Image()
-const sprite2=new Image()
-const sprite3=new Image()
-const sprite4=new Image()
 
-sprite.src="/deadpool-head.png"
-sprite1.src="/deadpool-dancing.gif"
-sprite2.src="/deadpool-wolverine.png"
-sprite3.src="/deadpool-x-wolverine.png"
-sprite4.src="/deadpool.png"
 
-const spriteArray=[sprite,sprite1,sprite2,sprite3,sprite4]
+const sprite_images=[
+"visuals/drum.png",
+"visuals/femalesinger.png",
+"visuals/guitar.png",
+"visuals/keyboard.png",
+"visuals/malesinger.png",
+"visuals/saxophone.png"]
+
+const spriteArray=sprite_images.map(src=>{
+  const sprite=new Image()
+  sprite.src=src
+  return sprite
+})
 
 export function initializeVisualization(canvas: HTMLCanvasElement, audio: any, isPlaying: boolean) {
     if (audio.context) {
@@ -54,7 +56,7 @@ export function initializeVisualization(canvas: HTMLCanvasElement, audio: any, i
             // console.log(analyser,audioSource)
         }
 
-  analyser.fftSize = 1024;
+  analyser.fftSize = 512;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
   // console.log(bufferLength,dataArray)
@@ -67,8 +69,7 @@ export function initializeVisualization(canvas: HTMLCanvasElement, audio: any, i
     if(ctx && analyser){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         analyser.getByteFrequencyData(dataArray);
-        deadpool3Visualizer(bufferLength, x, barWidth, dataArray, canvas, ctx);
-        // CircleVisualiser(bufferLength, dataArray, canvas, ctx);
+        CircleVisualiser(bufferLength, dataArray, canvas, ctx);
         if (isPlaying) {
             requestAnimationFrame(animate);
         }
@@ -88,41 +89,27 @@ export function cleanupVisualization() {
   analyser = null;
 }
 
-function deadpool3Visualizer(bufferLength: number, x: number, barWidth: number, dataArray: Uint8Array, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-  for (let i = 0; i < bufferLength; i++) {
-    let barHeight = dataArray[i];
-    ctx.save();
-    ctx.translate(canvas.width/2, canvas.height/2);
-    let rotateValue=Math.random()*2    
-    ctx.rotate(i*rotateValue);
-    let calculatedsprite=spriteArray[Math.floor(Math.random()*4)]
-    ctx.drawImage(calculatedsprite,0,barHeight,barHeight/1.5,barHeight/1.5)
-    x += barWidth;
-    ctx.restore();
-  }
-  
-}
 
 
 function CircleVisualiser(bufferLength: number, dataArray: Uint8Array, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
   const radius = 140
-  const barWidth = 2; // Reduced bar width for more bars
+  const barWidth = 10;
   const totalBars = bufferLength / 2; // Use half of the buffer for a full circle
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let i = 0; i < totalBars; i++) {
-      const barHeight = dataArray[i]*0.5; 
+      const barHeight = dataArray[i]*0.3; 
       const angle = (i / totalBars) * Math.PI * 2 - Math.PI / 2; // Start from the top (subtract PI/2)
-
+      const gapSize=10
       const startX = centerX + Math.cos(angle) * radius;
       const startY = centerY + Math.sin(angle) * radius;
       const endX = startX + Math.cos(angle) * barHeight;
       const endY = startY + Math.sin(angle) * barHeight;
 
-      const hue = 120 + (i / 2);
+      const hue =120 +(i / totalBars) * 180;
       ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
       ctx.lineWidth = barWidth;
 
@@ -130,5 +117,12 @@ function CircleVisualiser(bufferLength: number, dataArray: Uint8Array, canvas: H
       ctx.moveTo(startX, startY);
       ctx.lineTo(endX, endY);
       ctx.stroke();
-  }
+
+      const spriteSize = 18;
+      const sprite=spriteArray[Math.floor(Math.random()*6)]      
+      const spriteX = endX + Math.cos(angle) * (gapSize + spriteSize / 2) - spriteSize / 2;
+      const spriteY = endY + Math.sin(angle) * (gapSize + spriteSize / 2) - spriteSize / 2;
+
+      ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);
+    }
 }
