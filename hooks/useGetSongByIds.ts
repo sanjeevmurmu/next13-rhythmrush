@@ -5,7 +5,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { Song } from "@/types";
 import { customSort } from "@/libs/customsort";
 
-const useSongByIds = (ids?: string[]) => {
+const useSongByIds = (list?: string[]) => {
   const [isLoading, setIsLoading] = useState(false);
   const [songs, setSongs] = useState<Song[]>([]);
   const { supabaseClient } = useSessionContext();
@@ -13,15 +13,15 @@ const useSongByIds = (ids?: string[]) => {
 
 
   useEffect(() => {
-    if (!ids || ids.length===0) {
+    if (!list || list.length===0) {
       return;
     }
 
-    const newIds=ids.filter(id=>!fetchedIds.current.has(id))
+    const newIds=list.filter(id=>!fetchedIds.current.has(id))
 
     if(newIds.length===0){
       // If no new IDs, just reorder the existing songs 
-      setSongs(prevSongs => customSort(prevSongs!, ids));
+      setSongs(prevSongs => customSort(prevSongs!, list));
       return;
     }
 
@@ -43,13 +43,13 @@ const useSongByIds = (ids?: string[]) => {
       setSongs(prevSongs => {
         const updatedSongs = [...prevSongs, ...newSongs];
         // console.log("Fetched and sorted songs:", updatedSongs);
-        return customSort(updatedSongs, ids);
+        return customSort(updatedSongs, list);
       });
       setIsLoading(false);
     }
 
     fetchSong();
-  }, [ids, supabaseClient]);
+  }, [list, supabaseClient]);
 
   return useMemo(() => ({
     isLoading,

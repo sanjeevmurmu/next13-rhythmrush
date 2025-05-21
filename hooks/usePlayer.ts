@@ -1,21 +1,45 @@
 import { create } from 'zustand';
 
-interface PlayerStore {
-  ids: string[];
+interface PlayerStore extends RoomPlayerContext{
+  queue: string[];
   activeId?: string;
   setId: (id: string) => void;
-  setIds: (ids: string[]) => void;
+  setQueue: (queue: string[]) => void;
   reset: () => void;
+
 }
 
 
+interface RoomPlayerContext{
+  roomsongisplaying:boolean;
+  roomId?:string;
+  start:number
+  playback:number;
+  isHost:boolean;
+  setRoomId:(val:string)=>void;
+  setPlayback:(val:number)=>void
+  setStart:(val:number)=>void
+  setIsHost:(val:boolean)=>void;
+  setRoomSongIsPlaying:(val:boolean)=>void
+}
+
 
 const usePlayer = create<PlayerStore>((set) => ({
-  ids: [],
   activeId: undefined,
+  queue: [],
+  isHost:true,
+  playback:0,
+  roomId:undefined,
+  roomsongisplaying:false,
+  start:0,
   setId: (id: string) => set({ activeId: id }),
-  setIds: (ids: string[]) => set({ ids }),
-  reset: () => set({ ids: [], activeId: undefined }),
+  setQueue: (list: string[]) => set({ queue:list}),
+  reset: () => set({queue:[],activeId:undefined,isHost:true,playback:0,roomId:undefined}),
+  setIsHost:(val)=>set({isHost:val}),
+  setStart:(val:number)=>set({start:val}),
+  setPlayback:(val:number)=>set({playback:val}),
+  setRoomId:(val:string)=>set({roomId:val}),
+  setRoomSongIsPlaying:(val:boolean)=>set({roomsongisplaying:val}),
 }));
 
 

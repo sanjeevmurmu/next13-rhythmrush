@@ -10,7 +10,7 @@ const getUserDetails = async():Promise<UserDetails> => {
     const {data:sessionData,error:sessionError}=await supabase.auth.getSession()
   
     if(sessionError){
-        console.log(sessionError.message)
+        console.log('[Server-user]',sessionError.message)
         return {'id':''}
     }
 
@@ -22,9 +22,9 @@ const getUserDetails = async():Promise<UserDetails> => {
 
 
   if (error) {
-    console.log(error.message);
+    console.log('[Server]',error.message);
   }
-  console.log(data)
+  // console.log(data)
   return (data as any) || {};
 }
 

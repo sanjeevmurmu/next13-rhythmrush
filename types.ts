@@ -48,6 +48,8 @@ export interface UserDetails {
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
 }
 
+export type PublicUserDetails = Pick<UserDetails, 'id' | 'full_name' | 'avatar_url'>;
+
 export interface ProductWithPrice extends Product {
   prices?: Price[];
 }
@@ -69,4 +71,27 @@ export interface Subscription {
   trial_start?: string;
   trial_end?: string;
   prices?: Price;
+}
+
+export interface SongRequestLog{
+  id:string,
+  song_id:string,
+  requested_by:string,
+  song_name:string,
+  status:'accept'|'decline'
+  roomId?:string
+}
+
+
+export interface Room{
+  id:string;
+  created_by:string;
+  host:string;
+  link:string;
+  members:string[],
+  current_song_id:string,
+  queue:string[],
+  is_playing:boolean,
+  current_song_started_at:number,
+  accumalated_playback_time:number,
 }

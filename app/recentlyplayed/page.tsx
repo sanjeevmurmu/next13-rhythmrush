@@ -4,11 +4,12 @@ import Header from "@/components/Header";
 
 import RecentlyPlayedContent from "./components/RecentlyPlayedContent";
 import getRecentlyPlayedSongs from "@/actions/getRecentlyPlayedSongs";
+import { Song } from "@/types";
 
 export const revalidate = 0;
 
 const RecentlyPlayed = async () => {
-  const songs = await getRecentlyPlayedSongs();
+  const songs:Song[] = /*await getRecentlyPlayedSongs()*/[];
 
   return (
     <div 

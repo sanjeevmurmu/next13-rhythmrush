@@ -11,65 +11,67 @@ import { MdOutlineQueueMusic } from "react-icons/md";
 import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import { TbCircle1Filled } from "react-icons/tb";
-
 import LikeButton from "./LikeButton";
 import MediaItem from "./MediaItem";
 import Slider from "./Slider";
-import useQueueSidebar from "@/store/useQueueSidebar";
+import useQueueMenu from "@/hooks/useQueueMenu";
 import AudioVisualizer from "./AudioVisualizer";
 import { useMouseEventsContext } from "@/providers/MouseEventsProvider";
+import toast from "react-hot-toast";
 
 interface PlayerContentProps {
   song: Song;
   songUrl: string;
   looptype:number
   setLoopType:Dispatch<SetStateAction<0|1|2>>
-
+  startedAt:(duration:number,roomId?:string)=>Promise<void>,
+  setPlaybackTime:(duration:number,roomId?:string)=>Promise<void>,
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType }) => {
+const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType,startedAt,setPlaybackTime}) => {
   const player = usePlayer();
   const [volume, setVolume] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(player.playback);
   const [endValue, setendValue] = useState(false)
   const [audio,setAudio]=useState<HTMLAudioElement|null>(null)
 
   const { isMouseOver } = useMouseEventsContext();
 
-  const {isOpen,onClose,onOpen}=useQueueSidebar((state)=>state)
+  const {isOpen,onClose,onOpen}=useQueueMenu((state)=>state)
 
   const Icon = isLoading ? FaSpinner : isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
   
+  console.log(player,Date.now(),Date.now()-player.start)
 
   const onPlayNext = () => {
-    if (player.ids.length === 0 || looptype==1) {
+    if (player.queue.length === 0 || looptype==1) {
       return;
     }
 
-    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-    const nextSong = player.ids[currentIndex + 1];
+    const currentIndex = player.queue.findIndex((id) => id === player.activeId);
+    const nextSong = player.queue[currentIndex + 1];
 
     if (!nextSong && looptype!==0) {
-      return player.setId(player.ids[0]);
+      return player.setId(player.queue[0]);
     }
 
     player.setId(nextSong);
   };
 
   const onPlayPrevious = () => {
-    if (player.ids.length === 0 || looptype==1) {
+    if (player.queue.length === 0 || looptype==1) {
       return;
     }
 
 
-    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-    const previousSong = player.ids[currentIndex - 1];
+    const currentIndex = player.queue.findIndex((id) => id === player.activeId);
+    const previousSong = player.queue[currentIndex - 1];
 
     if (!previousSong && looptype!==0) {
-      return player.setId(player.ids[player.ids.length - 1]);
+      return player.setId(player.queue[player.queue.length - 1]);
     }
 
     player.setId(previousSong);
@@ -80,20 +82,27 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     onplay: () => {
       setIsLoading(false);
       setIsPlaying(true);
+      if(player.isHost) startedAt(Date.now(),player.roomId)
+      if(player.start>0) setCurrentTime(player.playback+(Date.now()-player.start))
+      player.setRoomSongIsPlaying(true)
     },
     onend: () => {
       setIsPlaying(false);
       setCurrentTime(0)
       setendValue(true)
+      player.setRoomSongIsPlaying(false)
       },
-    onpause: () => setIsPlaying(false),
+    onpause: () => {
+    setIsPlaying(false)
+    setPlaybackTime(currentTime,player.roomId)
+    },
     format: ["mp3"],
   });
 
   useEffect(() => {
     sound?.play();
     if(sound){
-      console.log(sound)
+      // console.log(sound)
       setAudio(sound._sounds[0]._node);
     }
     return () => {
@@ -105,9 +114,11 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
   const handlePlay = () => {
     // console.log(sound);
-    if (!isPlaying) {
+    if (!isPlaying && !player.roomsongisplaying) {
       play();
+      player.setRoomSongIsPlaying(true)
     } else {
+      player.setRoomSongIsPlaying(false)
       pause();
     }
   };
@@ -121,7 +132,12 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
   };
 
   const handleSeek = (value:Number) => {
-    sound?.seek(value);
+    if(player.isHost){
+      sound?.seek(value);
+    }
+    else{
+      toast.error("Not permissible in a room where you are not Host")
+    }
   };
 
 
@@ -236,7 +252,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
         <RxLoop
       size={15}
       className={`
-        ${looptype!==0?"text-white":"text-neutral-400"} 
+        ${looptype!==0?"text-white":"text-neutral-400"}
+        ${!player.isHost && "hidden"}
         cursor-pointer 
         hover:text-white 
         transition
@@ -255,7 +272,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
           `}/> 
         <div
           onClick={handlePlay}
-          className="
+          className={`
+          ${!player.isHost && "hidden"}
           h-10
           w-10
           flex 
@@ -265,7 +283,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
           bg-white 
           p-1 
           cursor-pointer
-          "
+          `}
           >
           <Icon size={30} className="text-black" />
         </div>
@@ -284,7 +302,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
         "
         >
         <div className="md:flex justify-center items-center max-w-[722px] gap-x-6">
-        <div className="relative" onClick={handleloop}>
+        <div className={`relative ${!player.isHost && "hidden"}`} onClick={handleloop}>
         {looptype==1 && <TbCircle1Filled size={10} className=" absolute text-white right-0"/>}
         <RxLoop
           size={15}
@@ -308,16 +326,20 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
         <AiFillStepBackward
           onClick={onPlayPrevious}
           size={30}
-          className="
-          text-neutral-400 
-          cursor-pointer 
-          hover:text-white 
-          transition
-          "
+          className={
+            `
+            ${!player.isHost && "hidden"}
+            text-neutral-400 
+            cursor-pointer 
+            hover:text-white 
+            transition
+            `            
+          }
           />
         <div
           onClick={handlePlay}
-          className="
+          className={`
+          ${!player.isHost && "hidden"}
           flex 
           items-center 
           justify-center
@@ -327,19 +349,22 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
           bg-white 
           p-1 
           cursor-pointer
-            "
+            `}
             >
           <Icon size={30} className="text-black" />
         </div>
         <AiFillStepForward
           onClick={onPlayNext}
           size={30}
-          className="
-          text-neutral-400 
-          cursor-pointer 
-          hover:text-white 
-          transition
-          "
+          className={
+            `
+            ${!player.isHost && "hidden"}
+            text-neutral-400 
+            cursor-pointer 
+            hover:text-white 
+            transition
+            `
+          }
           />
           </div>
           <div className="flex items-center gap-x-2 w-[400px]">

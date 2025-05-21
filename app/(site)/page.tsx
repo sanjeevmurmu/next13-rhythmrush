@@ -5,11 +5,13 @@ import Header from "@/components/Header";
 import ListItem from "@/components/ListItem";
 
 import PageContent from "./components/PageContent";
+import { Song } from "@/types";
 
 export const revalidate = 0;
 
 export default async function Home() {
-  const songs = await getSongs(5);
+  const songs:Song[] = /*await getSongs(5)*/ [];
+  
 
   return (
     <div

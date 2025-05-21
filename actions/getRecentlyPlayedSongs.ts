@@ -21,11 +21,11 @@ export const getRecentlyPlayedSongs = async (): Promise<Song[]> => {
   .single()
 
   if(RecentSongsError){
-    console.log(RecentSongsError)
+    console.log('[Server-recent_songs]',RecentSongsError)
   }
     
   const recent_songs_Ids = data?.recent_songs
-  console.log(recent_songs_Ids)
+  // console.log(recent_songs_Ids)
   
   if (!recent_songs_Ids) return [];
   

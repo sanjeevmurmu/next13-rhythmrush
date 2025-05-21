@@ -4,11 +4,12 @@ import getLikedSongs from "@/actions/getLikedSongs";
 import Header from "@/components/Header";
 
 import LikedContent from "./components/LikedContent";
+import { Song } from "@/types";
 
 export const revalidate = 0;
 
 const Liked = async () => {
-  const songs = await getLikedSongs();
+  const songs:Song[] = /*await getLikedSongs()*/ [];
 
   return (
     <div 

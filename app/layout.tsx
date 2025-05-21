@@ -10,7 +10,6 @@ import SupabaseProvider from '@/providers/SupabaseProvider'
 import Player from '@/components/Player'
 
 import './globals.css'
-import Queue from '@/components/Queue'
 import { MouseEventsProvider } from '@/providers/MouseEventsProvider'
 
 const font = Figtree({ subsets: ['latin'] })

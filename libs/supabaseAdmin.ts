@@ -11,7 +11,7 @@ export const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
-console.log(supabaseAdmin)
+// console.log(supabaseAdmin)
 const upsertProductRecord = async (product: Stripe.Product) => {
   const productData: Product = {
     id: product.id,
@@ -24,7 +24,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
 
   const { error } = await supabaseAdmin.from('products').upsert([productData]);
   if (error) throw error;
-  console.log(`Product inserted/updated: ${product.id}`);
+  console.log(`[Server],Product inserted/updated: ${product.id}`);
 };
 
 const upsertPriceRecord = async (price: Stripe.Price) => {
@@ -44,7 +44,7 @@ const upsertPriceRecord = async (price: Stripe.Price) => {
 
   const { error } = await supabaseAdmin.from('prices').upsert([priceData]);
   if (error) throw error;
-  console.log(`Price inserted/updated: ${price.id}`);
+  console.log(`[Server],Price inserted/updated: ${price.id}`);
 };
 
 const createOrRetrieveCustomer = async ({
@@ -72,7 +72,7 @@ const createOrRetrieveCustomer = async ({
       .from('customers')
       .insert([{ id: uuid, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
-    console.log(`New customer created and inserted for ${uuid}.`);
+    console.log(`[Server],New customer created and inserted for ${uuid}.`);
     return customer.id;
   }
   return data.stripe_customer_id;
@@ -158,7 +158,7 @@ const manageSubscriptionStatusChange = async (
     .upsert([subscriptionData]);
   if (error) throw error;
   console.log(
-    `Inserted/updated subscription [${subscription.id}] for user [${uuid}]`
+    `[Server],Inserted/updated subscription [${subscription.id}] for user [${uuid}]`
   );
 
   // For a new subscription copy the billing details to the customer object.

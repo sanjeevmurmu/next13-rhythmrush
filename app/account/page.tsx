@@ -2,9 +2,10 @@ import Header from "@/components/Header";
 
 import AccountContent from "./components/AccountContent";
 import getUserDetails from "@/actions/getUserDetails";
+import { UserDetails } from "@/types";
 
 const Account = async() => {
-  const userDetail = await getUserDetails();
+  const userDetail:UserDetails = /*await getUserDetails()*/{id:'random'};
   // console.log(userDetail)
 
   return (

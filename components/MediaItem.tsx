@@ -11,14 +11,15 @@ interface MediaItemProps {
   data: Song;
   onClick?: (id: string) => void;
   ImgclassName?:string;
+  componentClassName?:string
 }
 
 const MediaItem: React.FC<MediaItemProps> = ({
   data,
   onClick,
   ImgclassName,
+  componentClassName
 }) => {
-  const player = usePlayer();
   const imageUrl = useLoadImage(data);
 
   const handleClick = () => {
@@ -27,7 +28,6 @@ const MediaItem: React.FC<MediaItemProps> = ({
       return onClick(data.id);
     }
   
-    return player.setId(data.id);
   };
 
   return ( 
@@ -42,7 +42,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
         w-full 
         p-2 
         rounded-md
-      `)}
+      `,componentClassName)}
     >
       <div 
         className={twMerge(`relative 

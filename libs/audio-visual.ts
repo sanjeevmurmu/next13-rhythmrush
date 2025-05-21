@@ -1,3 +1,4 @@
+'use client'
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
 let audioSource: AudioNode | null = null;

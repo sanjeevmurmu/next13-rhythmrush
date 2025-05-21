@@ -17,8 +17,8 @@ interface AudioVisualizerProps{
 
 const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
 
-    const imagePath = useLoadImage(song);
-    const { onMouseEvent } = useMouseEventsContext();
+    const imageUrl = useLoadImage(song);
+    const {isMouseOver, onMouseEvent } = useMouseEventsContext();
     const componentRef = useComponentMouseEvents({ onMouseEvent });
     const canvasRef=useRef<HTMLCanvasElement>(null)
 
@@ -41,6 +41,7 @@ const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
       };
   }, [audioData, song.id]); 
 
+
   return (
     <div className={`absolute 
           w-full
@@ -56,13 +57,13 @@ const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
       >
         <Image
           className="object-cover"
-          src={imagePath || '/images/music-placeholder.png'}
+          src={imageUrl || '/images/music-placeholder.png'}
           fill
           alt="Image"
         />
       </div>    
-      <canvas ref={canvasRef} className="absolute top-0 bottom-0 m-auto w-[75%] h-[75%]" />    
-      <div 
+    {!isMouseOver && <canvas ref={canvasRef} className="absolute top-0 bottom-0 m-auto w-[75%] h-[75%]" />   } 
+      {!isMouseOver && <div 
                 className="
                 absolute
                   aspect-square 
@@ -78,7 +79,7 @@ const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
                   overflow-hidden">
                 <Image
                   className="object-cover"
-                  src={imagePath || '/images/music-placeholder.png'}
+                  src={imageUrl || '/images/music-placeholder.png'}
                   fill
                   alt="Image"
                   />
@@ -89,7 +90,7 @@ const AudioVisualizer = ({song,audioData}:AudioVisualizerProps) => {
                         <span>{`${song.title}(by ${song.author})`}</span>
                     </div>
                 </div>
-            </div>
+            </div>}
     </div>
   )
 }

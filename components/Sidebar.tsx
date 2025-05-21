@@ -2,9 +2,10 @@
 
 import { HiHome } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
+import { MdGroup } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { usePathname } from "next/navigation";
-
+import { useUser } from "@/hooks/useUser";
 import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 
@@ -12,6 +13,9 @@ import SidebarItem from "./SidebarItem";
 import Box from "./Box";
 import Library from "./Library";
 import { useMemo } from "react";
+import useRoomModal from "@/hooks/useRoomModal";
+import useAuthModal from "@/hooks/useAuthModal";
+import toast from "react-hot-toast";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -21,6 +25,12 @@ interface SidebarProps {
 const Sidebar = ({ children, songs }: SidebarProps) => {
   const pathname = usePathname();
   const player = usePlayer();
+
+  const roomModal = useRoomModal();
+  const authModal = useAuthModal();
+  const {user}=useUser()
+
+
 
   const routes = useMemo(() => [
     {
@@ -34,11 +44,27 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
       label: 'Search',
       href: '/search',
       active: pathname === '/search'
-    },
+    }
   ], [pathname]);
 
+
+
+  const onClick = async() => {
+    
+    if (!user) {
+      return authModal.onOpen();
+    }
+
+    if(pathname === '/room'){
+      return toast.error("You are already in a room leave it to join a new one");
+    }
+
+    
+    return roomModal.onOpen();
+  }
+
   return (
-    <div 
+    <div
       className={twMerge(`
         flex 
         h-full
@@ -46,7 +72,7 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
         player.activeId && 'h-[calc(100%-80px)]'
       )}
     >
-      <div 
+      <div
         className="
           hidden 
           md:flex 
@@ -63,6 +89,29 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
             {routes.map((item) => (
               <SidebarItem key={item.label} {...item} />
             ))}
+            <div
+              className={twMerge(`
+                flex 
+                flex-row 
+                h-auto 
+                items-center 
+                w-full 
+                gap-x-4 
+                text-md 
+                font-medium
+                cursor-pointer
+                hover:text-white
+                transition
+                text-neutral-400
+                py-1`,
+                roomModal.isOpen && "text-white"
+              )
+              }
+              onClick={onClick}
+            >
+              <MdGroup size={26} />
+              <p className="truncate w-100">Rooms</p>
+            </div>
           </div>
         </Box>
         <Box className="overflow-y-auto h-full">
@@ -75,5 +124,5 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
     </div>
   );
 }
- 
+
 export default Sidebar;

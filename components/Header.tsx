@@ -16,6 +16,8 @@ import { useUser } from "@/hooks/useUser";
 import usePlayer from "@/hooks/usePlayer";
 
 import Button from "./Button";
+import { MdGroup } from "react-icons/md";
+import useRoomModal from "@/hooks/useRoomModal";
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -29,6 +31,8 @@ const Header: React.FC<HeaderProps> = ({
   const player = usePlayer();
   const router = useRouter();
   const authModal = useAuthModal();
+  const roomModal = useRoomModal();
+
 
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
@@ -42,6 +46,19 @@ const Header: React.FC<HeaderProps> = ({
       toast.error(error.message);
     }
   }
+
+
+
+  const handleRoomClick = async() => {
+    
+    if (!user) {
+      return authModal.onOpen();
+    }
+
+    
+    return roomModal.onOpen();
+  }
+
 
   return (
     <div
@@ -124,6 +141,21 @@ const Header: React.FC<HeaderProps> = ({
               transition
             ">
             <BiSearch className="text-black" size={20} />
+          </button>
+          <button 
+            onClick={handleRoomClick} 
+            className="
+              rounded-full 
+              p-2 
+              bg-white 
+              flex 
+              items-center 
+              justify-center 
+              cursor-pointer 
+              hover:opacity-75 
+              transition
+            ">
+            <MdGroup className="text-black" size={20} />
           </button>
         </div>
         

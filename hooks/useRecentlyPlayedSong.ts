@@ -2,9 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSessionContext,useUser } from "@supabase/auth-helpers-react";
 
-import { Song } from "@/types";
-
-const SendRecentlyPlayedSong = (songId?: string) => {
+const RecentlyPlayedSong = (songId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [recdata, setRecData] = useState(undefined);
   const { supabaseClient } = useSessionContext();
@@ -23,7 +21,7 @@ const SendRecentlyPlayedSong = (songId?: string) => {
     })
 
       if (error) {
-        console.log(error)
+        console.log('[Server]',error)
         setIsLoading(false);
         return toast.error(error.message);
       }
@@ -35,10 +33,6 @@ const SendRecentlyPlayedSong = (songId?: string) => {
     SendSong();
   }, [songId, supabaseClient, user?.id]);
 
-  return useMemo(() => ({
-    isLoading,
-    recdata
-  }), [isLoading, recdata]);
 };
 
-export default SendRecentlyPlayedSong;
+export default RecentlyPlayedSong;

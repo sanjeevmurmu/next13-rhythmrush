@@ -15,7 +15,7 @@ const getSongById = async (id: string): Promise<Song> => {
     .single();
 
   if (error) {
-    console.log(error.message);
+    console.log('[Server]',error.message);
   }
 
   return (data as any) || [];

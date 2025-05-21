@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
-interface QueueSidebarStore {
+interface QueueMenuStore {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
 }
 
-const useQueueSidebar = create<QueueSidebarStore>((set) => ({
+const useQueueMenu = create<QueueMenuStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),
 }));
 
-export default useQueueSidebar;
+export default useQueueMenu;

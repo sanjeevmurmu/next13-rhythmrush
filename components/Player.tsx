@@ -1,34 +1,35 @@
 "use client";
 
-import {useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState,useCallback} from "react";
 
+import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import useLoadSongUrl from "@/hooks/useLoadSongUrl";
 import useGetSongById from "@/hooks/useGetSongById";
-import { useUser } from "@/hooks/useUser";
-import useAuthModal from "@/hooks/useAuthModal";
+import useGetSongByIds from "@/hooks/useGetSongByIds";
+import RecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
 
 import PlayerContent from "./PlayerContent";
-import Queue from "./Queue";
-import useGetSongByIds from "@/hooks/useGetSongByIds";
-import SendRecentlyPlayedSong from "@/hooks/useRecentlyPlayedSong";
-import { Song } from "@/types";
+import QueueMenu from "./QueueMenu";
+import { useRooms } from "@/hooks/useRoomsServices";
 
 
 type LoopType=0|1|2
 
+// 0 = No loop | 1 = Repeat current song | 2 = Repeat Queue
+
 const Player = () => {
 
-  const {supabaseClient} =useSessionContext()
-  const {user}=useUser()
-  const authModal = useAuthModal();
 
   const player = usePlayer();
   const { song } = useGetSongById(player.activeId);
-  const { songs } =useGetSongByIds(player.ids)
+  const { songs } =useGetSongByIds(player.queue)
+  const{updateCurrentRoomQueue,
+        updateCurrentSonginRoom,
+        updatePlaybackStatusinRoom,
+        updateSongStartedAtinRoom,error}=useRooms()
 
-  const {recdata}=SendRecentlyPlayedSong(player.activeId)
+
   
   const songUrl = useLoadSongUrl(song!);
 
@@ -43,16 +44,33 @@ const Player = () => {
     }
   },[songs])
 
+  useEffect(()=>{
+    const update=async()=>{
+      await updateCurrentSonginRoom(player.activeId, player.roomId);
+      if(error) console.log(error)
+    }
+    update()
+  },[player.activeId,player.roomId])
+
+  RecentlyPlayedSong(player.activeId);
+  
+  
+
   const onReorder=useCallback((newOrder:Song[])=>{
     setOrderedSongs(newOrder)
-    player.setIds(newOrder.map(song=>song.id))
+    player.setQueue(newOrder.map(song=>song.id))
+    updateCurrentRoomQueue(player.queue,player.roomId)
   },[player])
+  
+  
+  
+  
+  
+  if (!song || !songUrl || !player.activeId||!orderedSongs) {
+    return null;
+  }
+  
 
-
-
-if (!song || !songUrl || !player.activeId||!orderedSongs) {
-  return null;
-}
 
 let allSongs = looptype === 1 
     ? orderedSongs.filter(song => song.id === player.activeId)
@@ -60,8 +78,8 @@ let allSongs = looptype === 1
 
   return (
     <>
-    <Queue allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} />   
-    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} />
+    <QueueMenu allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} host={player.isHost} />   
+    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={updateSongStartedAtinRoom} setPlaybackTime={updatePlaybackStatusinRoom} />
     </>
   );
 }

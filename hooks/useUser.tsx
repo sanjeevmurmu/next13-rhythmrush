@@ -71,7 +71,7 @@ export const MyUserContextProvider = (props: Props) => {
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
-    subscription
+    subscription,
   };
 
   return <UserContext.Provider value={value} {...props} />;

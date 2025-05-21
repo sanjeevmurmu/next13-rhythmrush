@@ -15,7 +15,7 @@ export function MouseEventsProvider({ children }: { children: React.ReactNode })
   const [isMouseOver, setIsMouseOver] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleMouseEvent = useCallback(() => {
+  const handleMouseEvent = () => {
     setIsMouseOver(true);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -23,7 +23,7 @@ export function MouseEventsProvider({ children }: { children: React.ReactNode })
     timeoutRef.current = setTimeout(() => {
       setIsMouseOver(false);
     }, 10000); // 10 seconds
-  }, []);
+  };
 
   const value: MouseEventsContextType = { isMouseOver, onMouseEvent: handleMouseEvent };
 
