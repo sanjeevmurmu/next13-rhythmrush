@@ -44,7 +44,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
             player.setIsHost(userId===newRoomDetails.host)
             player.setId(newRoomDetails.current_song_id)
             player.setStart(newRoomDetails.current_song_started_at)
-            player.setPlayback(newRoomDetails.accumalated_playback_time)
+            player.setPlayback(newRoomDetails.accumulated_playback_time)
             player.setQueue(newRoomDetails.queue)
             player.setRoomSongIsPlaying(newRoomDetails.is_playing)
         }
@@ -99,7 +99,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
             player.setId(room.current_song_id)
             player.setQueue(room.queue)
             player.setStart(room.current_song_started_at)
-            player.setPlayback(room.accumalated_playback_time)
+            player.setPlayback(room.accumulated_playback_time)
             player.setRoomSongIsPlaying(room.is_playing)
         }
         console.log('room',room)
