@@ -157,3 +157,50 @@ create policy "Can only view own subs data." on subscriptions
 drop publication if exists supabase_realtime;
 create publication supabase_realtime
   for table products, prices;
+
+
+/** add user to room**/
+
+DECLARE
+  current_members JSONB;
+  user_id_text TEXT := to_jsonb(p_user_id)::text;
+BEGIN
+  -- Get the current members JSON array
+  SELECT members INTO current_members
+  FROM public.room
+  WHERE id = p_room_id;
+
+  -- If null, initialize as an empty JSON array
+  IF current_members IS NULL THEN
+    current_members := '[]'::jsonb;
+  END IF;
+
+  -- Check if user is already in the array
+  IF NOT current_members @> to_jsonb(ARRAY[p_user_id])::jsonb THEN
+    current_members := current_members || to_jsonb(p_user_id);
+  END IF;
+
+  -- Update the room record
+  UPDATE public.room
+  SET members = current_members
+  WHERE id = p_room_id;
+END;
+
+/** notify room change **/
+declare
+  payload JSON;
+begin
+  payload:=json_build_object(
+    'event',TG_OP,
+    'room_id',coalesce(new.id,old.id),
+    'members',coalesce(new.members,old.members),
+    'host',coalesce(new.host,old.host),
+    'timestamp',now()
+  );
+
+  perform
+    pg_notify('room_changes',payload::text);
+  
+  return coalesce(new,old);
+
+end;

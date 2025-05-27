@@ -1,7 +1,7 @@
 "use client";
 
 import useSound from "use-sound";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { RxLoop } from "react-icons/rx";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
@@ -24,8 +24,8 @@ interface PlayerContentProps {
   songUrl: string;
   looptype:number
   setLoopType:Dispatch<SetStateAction<0|1|2>>
-  startedAt:(duration:number,roomId?:string)=>Promise<void>,
-  setPlaybackTime:(duration:number,roomId?:string)=>Promise<void>,
+  startedAt:()=>void,
+  setPlaybackTime:(duration:number)=>void,
 }
 
 const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType,startedAt,setPlaybackTime}) => {
@@ -43,8 +43,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
   const Icon = isLoading ? FaSpinner : isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
-  
-  console.log(player,Date.now(),Date.now()-player.start)
+
 
   const onPlayNext = () => {
     if (player.queue.length === 0 || looptype==1) {
@@ -82,22 +81,28 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     onplay: () => {
       setIsLoading(false);
       setIsPlaying(true);
-      if(player.isHost) startedAt(Date.now(),player.roomId)
-      if(player.start>0) setCurrentTime(player.playback+(Date.now()-player.start))
-      player.setRoomSongIsPlaying(true)
-    },
+      if(player.isHost) startedAt()
+      if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))    },
     onend: () => {
       setIsPlaying(false);
-      setCurrentTime(0)
+       setCurrentTime(0)
       setendValue(true)
-      player.setRoomSongIsPlaying(false)
       },
     onpause: () => {
     setIsPlaying(false)
-    setPlaybackTime(currentTime,player.roomId)
+    setPlaybackTime(currentTime)  
     },
     format: ["mp3"],
   });
+
+  useEffect(()=>{
+    if(player.roomsongisplaying){
+        play()
+      } 
+    else{
+      pause()
+    } 
+  },[player.roomsongisplaying])
 
   useEffect(() => {
     sound?.play();
@@ -116,9 +121,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     // console.log(sound);
     if (!isPlaying && !player.roomsongisplaying) {
       play();
-      player.setRoomSongIsPlaying(true)
+      if(player.isHost) player.setRoomSongIsPlaying(true)
     } else {
-      player.setRoomSongIsPlaying(false)
+      if(player.isHost) player.setRoomSongIsPlaying(false)
       pause();
     }
   };

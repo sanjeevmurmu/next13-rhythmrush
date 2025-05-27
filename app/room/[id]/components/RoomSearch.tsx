@@ -4,7 +4,7 @@ import { Song } from "@/types"
 import Input from "@/components/Input"
 import LikeButton from "@/components/LikeButton"
 import MediaItem from "@/components/MediaItem"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import useDebounce from "@/hooks/useDebounce"
 import useOnPlay from "@/hooks/useOnPlay"
 import useSongByTitle from "@/hooks/useGetSongByTitle"
@@ -12,7 +12,6 @@ import Button from "@/components/Button"
 import usePlayer from "@/hooks/usePlayer"
 import { useRooms } from "@/hooks/useRoomsServices"
 import toast from "react-hot-toast"
-import { useUpdateToRequstedSong } from "@/hooks/useRoomSongRequests"
 
 
 interface RoomSearchProps{
@@ -23,18 +22,15 @@ interface RoomSearchProps{
 
 const RoomSearch = ({roomId,userId}:RoomSearchProps) => {
 
-
-    useUpdateToRequstedSong(userId,roomId)
-
     const [value, setValue] = useState<string>("")
     const debouncedValue = useDebounce<string>(value, 300);    
     const {songs}=  useSongByTitle(debouncedValue)
+    const memoizedSongs = useMemo(() => songs, [songs]);
     const {sendSongRequests}=useRooms()
     const player=usePlayer()
-    const play=useOnPlay(songs)
+    const play=useOnPlay(memoizedSongs)
      
     console.log(songs)
-
 
     const sendRequest=async(songId:string,songname:string)=>{
         if(!player.isHost){
@@ -46,7 +42,6 @@ const RoomSearch = ({roomId,userId}:RoomSearchProps) => {
     const onClickPlay=(songId:string)=>{
         play(songId)
     }
-
 
     return (
         <div>

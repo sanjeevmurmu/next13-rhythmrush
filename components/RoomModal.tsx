@@ -1,5 +1,4 @@
 "use client";
-
 import { 
   useSessionContext, 
 } from '@supabase/auth-helpers-react';
@@ -33,12 +32,11 @@ const RoomModal = () => {
     if (session) {
       router.refresh();
       onClose();
+      setIsNavigating(false)
     }
   }, [session, router, onClose]);
 
-  useEffect(()=>{
-    setIsNavigating(false)
-  },[])
+
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -69,16 +67,14 @@ const RoomModal = () => {
   const handleJoinRoomClick = async () => {
     if (loading) return;
 
-    if(error) return console.log(error)
-
     if(!user) return toast.error('invalid user')
-
     const result = await joinRoom(value,user.id);
+    
+    if(error) return console.log(error)
 
     if (!result.success) {
       return toast.error(`${result.message}`);
     }
-
     else{
       player.setIsHost(false)
       player.setRoomId(result.roomId)
@@ -86,8 +82,6 @@ const RoomModal = () => {
       setIsNavigating(true,'join')
     }
   };
-
-
 
 
   let content=(<Box className="h-full flex flex-col items-center justify-center">

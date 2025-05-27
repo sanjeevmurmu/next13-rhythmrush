@@ -6,9 +6,12 @@ import useAuthModal from "./useAuthModal";
 import { useUser } from "./useUser";
 
 const useOnPlay = (songs: Song[]) => {
+
+  
   const player = usePlayer();
   const authModal = useAuthModal();
   const {user } = useUser();
+
 
   const onPlay = (playingid: string) => {
     // console.log(id)
@@ -16,8 +19,11 @@ const useOnPlay = (songs: Song[]) => {
       return authModal.onOpen();
     }
 
+    if(!songs) return
+
+
     // if (!subscription) {
-    //   return subscribeModal.onOpen();
+      //   return subscribeModal.onOpen();
     // }
 
     player.setId(playingid)

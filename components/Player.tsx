@@ -45,11 +45,7 @@ const Player = () => {
   },[songs])
 
   useEffect(()=>{
-    const update=async()=>{
-      await updateCurrentSonginRoom(player.activeId, player.roomId);
-      if(error) console.log(error)
-    }
-    update()
+    currentSong()
   },[player.activeId,player.roomId])
 
   RecentlyPlayedSong(player.activeId);
@@ -59,12 +55,25 @@ const Player = () => {
   const onReorder=useCallback((newOrder:Song[])=>{
     setOrderedSongs(newOrder)
     player.setQueue(newOrder.map(song=>song.id))
-    updateCurrentRoomQueue(player.queue,player.roomId)
+    updateQueue()
   },[player])
   
   
+  const updateQueue=async()=>{
+    await updateCurrentRoomQueue(player.queue,player.roomId)
+  }
+
+  const songStarted=async()=>{
+    await updateSongStartedAtinRoom(Date.now(),player.roomId)
+  }
+
+  const currentSong=async()=>{
+    await updateCurrentSonginRoom(player.activeId,player.queue,player.roomId)
+  }
   
-  
+  const updatePlayback=async(time:number)=>{
+    await updatePlaybackStatusinRoom(time,player.roomId)
+  }
   
   if (!song || !songUrl || !player.activeId||!orderedSongs) {
     return null;
@@ -79,7 +88,7 @@ let allSongs = looptype === 1
   return (
     <>
     <QueueMenu allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} host={player.isHost} />   
-    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={updateSongStartedAtinRoom} setPlaybackTime={updatePlaybackStatusinRoom} />
+    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={songStarted} setPlaybackTime={updatePlayback} />
     </>
   );
 }

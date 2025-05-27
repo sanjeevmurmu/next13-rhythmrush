@@ -29,6 +29,7 @@ export function useRooms() {
           link: newLink,
           host: userId,
           members:[],
+          queue:[],
           created_by: userId,
         },
       ])
@@ -157,13 +158,17 @@ export function useRooms() {
     return {success:true,message:'You have deleted the room'}
   }
 
-  const updateCurrentSonginRoom=async(id?:string,roomId?:string)=>{
-      if(!roomId || !id) return
+  const updateCurrentSonginRoom=async(id?:string,list?:string[],roomId?:string)=>{
+      if(!roomId || !id || !list) return
       const {data,error}=await supabaseClient.from('rooms').update([{
-        'current_song_id':id
+        'current_song_id':id,
+        'queue':list
       }]).eq('id',roomId)
       
-      if(error) setError(error.message)
+      if(error) {
+        console.log('current_song',error.message)
+        setError(error.message)
+      }
   }
 
   const updateCurrentRoomQueue=async(ids:string[],roomId?:string,)=>{
@@ -171,7 +176,11 @@ export function useRooms() {
         const {data,error}=await supabaseClient.from('rooms').update([{
           'queue':ids
         }]).eq('id',roomId)
-        if(error) setError(error.message)
+        if(error) 
+          {
+            setError(error.message)
+            console.log('room_queue',error?.message)
+          }
       }
   
 
@@ -181,8 +190,11 @@ export function useRooms() {
           'current_song_started_at':time,
           'is_playing':true
         }]).eq('id',roomId)
-        if(error) setError(error.message)
-        
+        if(error) 
+          {
+            console.log('song_start',error.message)
+            setError(error.message)
+          } 
       }
   
 
@@ -193,7 +205,10 @@ export function useRooms() {
           'playback_time':duration,
           'is_playing':false
         }]).eq('id',roomId)
-        if(error) setError(error.message)
+        if(error){
+          setError(error.message)
+          console.log('status',error.message)
+        } 
         }
     
   
