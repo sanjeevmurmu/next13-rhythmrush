@@ -33,7 +33,10 @@ const getRoomDetails = async (id: string) => {
   }
   console.log('get',roommembers,users)
 
-  if(roommembers) return {room:room as Room,members:roommembers as PublicUserDetails[]}
+  if(roommembers){
+    const sortedRoomMembers = users.map(uId => roommembers.find(member => member.id === uId)).filter(Boolean); 
+    return {room:room as Room,members:sortedRoomMembers as PublicUserDetails[]}
+  }
   }
  return {}
 };

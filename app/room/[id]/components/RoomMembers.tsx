@@ -24,7 +24,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     const player=usePlayer()
 
     const {onClose,setIsNavigating}=useRoomModal()
-    const {leaveRoom,deleteRoom,respondSongRequests}=useRooms()
+    const {leaveRoom,deleteRoom,respondSongRequests,error}=useRooms()
     
     const [memberList,setMemberList]=useState<UserDetails[]>([])
     const [activeTabMembers,setActiveTabMemebers]=useState(true)
@@ -53,11 +53,11 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     const detailedRequests = useMemo(() => {
     const requestersMap = Object.fromEntries(members.map((u) => [u.id, u]));
     const songsMap = Object.fromEntries(songs.map((s) => [s.id, s]));
-    console.log(requestersMap)
+    console.log('requestersMap ',requestersMap)
     return requests.map((req) => ({
         id: req.id,
         song: songsMap[req.song_id],
-        requested_by: requestersMap[req.requested_by],
+        requested_by: requestersMap[req.user_id],
         status: req.status,
     }));
     }, [requests, songs, members]);
@@ -120,14 +120,16 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
 
     const handleLeaveRoom=async()=>{
         await leaveRoom(room.id,userId)
+        console.log(error)
         player.reset()
-        router.push('/')
+        router.replace('/')
     }
 
     const handleDeleteRoom=async()=>{
         await deleteRoom(room.id)
+        console.log(error)
         player.reset()
-        router.push('/')
+        router.replace('/')
     }
     
    

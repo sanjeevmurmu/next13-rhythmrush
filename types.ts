@@ -76,7 +76,7 @@ export interface Subscription {
 export interface SongRequestLog{
   id:string,
   song_id:string,
-  requested_by:string,
+  user_id:string,
   song_name:string,
   status:'accept'|'decline'
   roomId?:string

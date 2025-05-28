@@ -61,18 +61,22 @@ const Player = () => {
   
   const updateQueue=async()=>{
     await updateCurrentRoomQueue(player.queue,player.roomId)
+    if(error) console.log(error)
   }
 
   const songStarted=async()=>{
     await updateSongStartedAtinRoom(Date.now(),player.roomId)
+    if(error) console.log(error)
   }
 
   const currentSong=async()=>{
     await updateCurrentSonginRoom(player.activeId,player.queue,player.roomId)
+    if(error) console.log(error)
   }
   
   const updatePlayback=async(time:number)=>{
     await updatePlaybackStatusinRoom(time,player.roomId)
+    if(error) console.log(error)
   }
   
   if (!song || !songUrl || !player.activeId||!orderedSongs) {
