@@ -87,11 +87,16 @@ export interface Room{
   id:string;
   created_by:string;
   host:string;
-  link:string;
   members:string[],
+  link:string;
   current_song_id:string,
-  queue:string[],
-  is_playing:boolean,
   current_song_started_at:number,
+<<<<<<< HEAD
   accumulated_playback_time:number,
 }
+=======
+  is_playing:boolean,
+  queue:string[],
+  accumulated_playback_time:number,
+}
+>>>>>>> origin/rooms
