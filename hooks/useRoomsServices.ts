@@ -202,7 +202,7 @@ export function useRooms() {
       
       if(!roomId) return
         const {error}=await supabaseClient.from('rooms').update([{
-          'playback_time':duration,
+          'accumulated_playback_time':duration,
           'is_playing':false
         }]).eq('id',roomId)
         if(error){

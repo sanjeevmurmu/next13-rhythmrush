@@ -93,5 +93,5 @@ export interface Room{
   queue:string[],
   is_playing:boolean,
   current_song_started_at:number,
-  accumalated_playback_time:number,
+  accumulated_playback_time:number,
 }
