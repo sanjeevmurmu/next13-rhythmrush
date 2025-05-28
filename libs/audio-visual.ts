@@ -5,12 +5,12 @@ let analyser: AnalyserNode | null = null;
 let audioSource: AudioNode | null = null;
 
 const sprite_images = [
-  "visuals/drum.png",
-  "visuals/femalesinger.png",
-  "visuals/guitar.png",
-  "visuals/keyboard.png",
-  "visuals/malesinger.png",
-  "visuals/saxophone.png"
+  "/visuals/drum.png",
+  "/visuals/femalesinger.png",
+  "/visuals/guitar.png",
+  "/visuals/keyboard.png",
+  "/visuals/malesinger.png",
+  "/visuals/saxophone.png"
 ];
 
 let loadedSprites: HTMLImageElement[] = [];
@@ -23,19 +23,18 @@ function preloadImages(imageUrls: string[]) {
         const img = new Image();
         img.src = url;
         img.onload = () => resolve({ url, image: img });
-        img.onerror = () => reject(new Error(`Failed to load ${url}`));
+        img.onerror = (event) => reject(new Error(`Failed to load ${url} ${event}`));
       });
     })
   );
 }
 
-function preloadSpritesOnce() {
+async function preloadSpritesOnce() {
   if (spritesReady) return Promise.resolve();
 
-  return preloadImages(sprite_images).then((results) => {
-    loadedSprites = results.map(({ image }) => image);
-    spritesReady = true;
-  });
+  const results = await preloadImages(sprite_images);
+  loadedSprites = results.map(({ image }) => image);
+  spritesReady = true;
 }
 
 export function initializeVisualization(canvas: HTMLCanvasElement, audio: any, isPlaying: boolean) {

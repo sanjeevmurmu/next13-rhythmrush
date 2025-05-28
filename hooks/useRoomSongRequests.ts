@@ -37,10 +37,10 @@ export const useUpdateToRequstedSong=(userId:string,roomId:string)=>{
 }
 
 export const useGetRequstedSongs=(userId:string,roomId:string)=>{
-
   const {supabaseClient}=useSessionContext()
   const [requests,setRequests]=useState<SongRequestLog[]>([])
-
+  
+  console.log(userId,roomId)
   const fetchSongRequests=async(roomId:string)=>{
     const {data,error}=await supabaseClient.from('songs_requests_log').select('*').eq('room_id',roomId)
     if(error) console.log(error.message)
@@ -62,6 +62,7 @@ export const useGetRequstedSongs=(userId:string,roomId:string)=>{
       table: 'songs_requests_log',
       filter: `room_id=eq.${roomId}`
     }, (payload) => {
+      console.log('payload',payload)
       const newRow = payload.new;
       toast("New Request has been recieved",{duration:4000})
       setRequests((prev)=>[newRow as SongRequestLog,...prev])
