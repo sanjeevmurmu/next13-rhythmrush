@@ -91,12 +91,7 @@ export interface Room{
   link:string;
   current_song_id:string,
   current_song_started_at:number,
-<<<<<<< HEAD
-  accumulated_playback_time:number,
-}
-=======
   is_playing:boolean,
   queue:string[],
   accumulated_playback_time:number,
 }
->>>>>>> origin/rooms

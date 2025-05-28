@@ -50,7 +50,7 @@ const Player = () => {
 
   RecentlyPlayedSong(player.activeId);
   
-  
+  console.log(player)
 
   const onReorder=useCallback((newOrder:Song[])=>{
     setOrderedSongs(newOrder)
@@ -75,8 +75,9 @@ const Player = () => {
   }
   
   const updatePlayback=async(time:number)=>{
-    await updatePlaybackStatusinRoom(time,player.roomId)
+    const result =await updatePlaybackStatusinRoom(time,player.roomId)
     if(error) console.log(error)
+    return result
   }
   
   if (!song || !songUrl || !player.activeId||!orderedSongs) {

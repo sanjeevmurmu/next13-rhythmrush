@@ -81,8 +81,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     onplay: () => {
       setIsLoading(false);
       setIsPlaying(true);
-      if(player.isHost) startedAt()
-      if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))    },
+          },
     onend: () => {
       setIsPlaying(false);
        setCurrentTime(0)
@@ -90,7 +89,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
       },
     onpause: () => {
     setIsPlaying(false)
-    setPlaybackTime(currentTime)  
     },
     format: ["mp3"],
   });
@@ -121,9 +119,18 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     // console.log(sound);
     if (!isPlaying && !player.roomsongisplaying) {
       play();
-      if(player.isHost) player.setRoomSongIsPlaying(true)
+      if(player.isHost) {
+        startedAt()
+        player.setRoomSongIsPlaying(true)
+      }
+      if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))
     } else {
-      if(player.isHost) player.setRoomSongIsPlaying(false)
+      if(player.isHost) 
+        {
+        player.setRoomSongIsPlaying(false)
+        setPlaybackTime(currentTime)
+        // console.log(setPlaybackTime(currentTime))  
+        }
       pause();
     }
   };

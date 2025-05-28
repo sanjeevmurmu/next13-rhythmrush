@@ -200,16 +200,21 @@ export function useRooms() {
 
   const updatePlaybackStatusinRoom=async(duration:number,roomId?:string)=>{
       
-      if(!roomId) return
-        const {error}=await supabaseClient.from('rooms').update([{
-          'accumulated_playback_time':duration,
-          'is_playing':false
-        }]).eq('id',roomId)
-        if(error){
-          setError(error.message)
-          console.log('status',error.message)
-        } 
-        }
+    console.log(duration,roomId)
+    const {data,error}=await supabaseClient.from('rooms').update([{
+        'accumulated_playback_time':duration,
+        'is_playing':false
+      }]).eq('id',roomId)
+      if(error){
+        setError(error.message)
+        console.log('status',error.message)
+        return {status:error.message,accumulated_playback:duration}
+
+      }
+      else{
+        return {status:'updated',accumulated_playback:duration}
+      } 
+      }
     
   
     const respondSongRequests=async(requestId:string,status:string)=>{

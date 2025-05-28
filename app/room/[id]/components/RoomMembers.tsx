@@ -10,7 +10,7 @@ import  {useRooms}  from "@/hooks/useRoomsServices";
 import useGetSongByIds from "@/hooks/useGetSongByIds";
 import usePlayer from "@/hooks/usePlayer";
 import toast from "react-hot-toast";
-import { useGetRequstedSongs,useRealtimeRooms} from "@/hooks/useRoomSongRequests";
+import { useGetRequstedSongs,useRealtimeRooms,RealtimeDetector} from "@/hooks/useRoomSongRequests";
 
 interface RoomMembersProps{
     userId:string,
@@ -20,6 +20,9 @@ interface RoomMembersProps{
 
 const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
 
+    const requests=useGetRequstedSongs(userId,room.id)
+    const newRoomDetails=useRealtimeRooms(userId,room.id)
+    RealtimeDetector()
     const router=useRouter()
     const player=usePlayer()
 
@@ -31,13 +34,11 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     const [activeTabRequests,setActiveTabRequests]=useState(false)
 
 
-    const requests=useGetRequstedSongs(userId,room.id)
 
     const requestedSongs = useMemo(() => {
     return requests.map(item => item.song_id);
     }, [requests]);
     const { songs } = useGetSongByIds(requestedSongs);
-    const newRoomDetails=useRealtimeRooms(userId,player.roomId)
 
     useEffect(()=>{
         if(newRoomDetails){

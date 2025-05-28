@@ -3,7 +3,6 @@ import { Room, SongRequestLog } from "@/types";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import usePlayer from "./usePlayer";
 
 export const useUpdateToRequstedSong=(userId:string,roomId:string)=>{
 
@@ -55,7 +54,7 @@ export const useGetRequstedSongs=(userId:string,roomId:string)=>{
     fetchSongRequests(roomId)
 
     const channel = supabaseClient
-    .channel(`song-requests-${userId}`)
+    .channel(`all-song-requests-${userId}`)
     .on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -77,19 +76,19 @@ export const useGetRequstedSongs=(userId:string,roomId:string)=>{
   return requests
 }
 
-export const useRealtimeRooms=(userId?:string,roomId?:string)=>{
+export const useRealtimeRooms=(userId:string,roomId:string)=>{
 
   const {supabaseClient}=useSessionContext()
   const [newRoomDetails,setNewRooomDetails]=useState<Room>()
   useEffect(() => {
     if (!userId || !roomId) return;
     const channel = supabaseClient
-    .channel(`song-requests-${userId}`)
+    .channel(`rooms-${roomId}`)
     .on('postgres_changes', {
       event: '*',
       schema: 'public',
       table: 'rooms',
-      filter: `room_id=eq.${roomId}`
+      filter: `id=eq.${roomId}`
     }, (payload) => {
       const updated = payload.new as Room;
       setNewRooomDetails(updated) 
@@ -100,7 +99,7 @@ export const useRealtimeRooms=(userId?:string,roomId?:string)=>{
   return () => {
     supabaseClient.removeChannel(channel);
   };
-}, [roomId, supabaseClient, userId]);
+}, [roomId, userId]);
 
 return useMemo(()=>newRoomDetails,[newRoomDetails])
 
