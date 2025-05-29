@@ -32,11 +32,12 @@ const RoomModal = () => {
     if (session) {
       router.refresh();
       onClose();
-      setIsNavigating(false)
     }
   }, [session, router, onClose]);
 
-
+  useEffect(()=>{
+    setIsNavigating(false)
+  },[])
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -45,7 +46,7 @@ const RoomModal = () => {
   }
 
 
-  console.log(messageType)
+  // console.log(messageType)
 
   const handleCreateRoomClick = async () => {
     if (loading) return;

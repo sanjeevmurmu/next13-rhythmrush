@@ -33,7 +33,7 @@ const Player = () => {
   
   const songUrl = useLoadSongUrl(song!);
 
-  // console.log(isMouseOver)
+  // console.log(songs)
 
   const [looptype, setLoopType] = useState<LoopType>(0);
   const [orderedSongs,setOrderedSongs]=useState(songs)
@@ -53,6 +53,7 @@ const Player = () => {
   console.log(player)
 
   const onReorder=useCallback((newOrder:Song[])=>{
+    console.log('new Order',songs)
     setOrderedSongs(newOrder)
     player.setQueue(newOrder.map(song=>song.id))
     updateQueue()
@@ -93,7 +94,7 @@ let allSongs = looptype === 1
   return (
     <>
     <QueueMenu allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} host={player.isHost} />   
-    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={songStarted} setPlaybackTime={updatePlayback} />
+    <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={songStarted} playbackTime={updatePlayback} />
     </>
   );
 }

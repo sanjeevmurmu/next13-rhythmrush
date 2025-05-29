@@ -22,7 +22,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
 
     const requests=useGetRequstedSongs(userId,room.id)
     const newRoomDetails=useRealtimeRooms(userId,room.id)
-    RealtimeDetector()
+    // RealtimeDetector()
     const router=useRouter()
     const player=usePlayer()
 
@@ -41,7 +41,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     const { songs } = useGetSongByIds(requestedSongs);
 
     useEffect(()=>{
-        if(newRoomDetails){
+        if(newRoomDetails && !player.isHost){
             player.setIsHost(userId===newRoomDetails.host)
             player.setId(newRoomDetails.current_song_id)
             player.setStart(newRoomDetails.current_song_started_at)
@@ -54,7 +54,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     const detailedRequests = useMemo(() => {
     const requestersMap = Object.fromEntries(members.map((u) => [u.id, u]));
     const songsMap = Object.fromEntries(songs.map((s) => [s.id, s]));
-    console.log('requestersMap ',requestersMap)
+    // console.log('requestersMap ',requestersMap)
     return requests.map((req) => ({
         id: req.id,
         song: songsMap[req.song_id],
@@ -64,7 +64,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
     }, [requests, songs, members]);
 
 
-    console.log(detailedRequests,newRoomDetails,requests)
+    // console.log(detailedRequests,newRoomDetails,requests)
     
     
     
@@ -84,7 +84,7 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
         setIsNavigating(false)
         player.reset()
         const isHost=room.host===userId
-        console.log(isHost,'ishost')
+        // console.log(isHost,'ishost')
         player.setIsHost(isHost)
         player.setRoomId(room.id)
         if(player.isHost){
@@ -103,8 +103,8 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
             player.setPlayback(room.accumulated_playback_time)
             player.setRoomSongIsPlaying(room.is_playing)
         }
-        console.log('room',room)
-        console.log('player',player)
+        // console.log('room',room)
+        // console.log('player',player)
 
     },[room])
 

@@ -10,7 +10,7 @@ import { Song } from "@/types";
 export const revalidate = 0;
 
 export default async function Home() {
-  const songs:Song[] = /*await getSongs(5)*/ [];
+  const songs:Song[] = await getSongs(5)|| [];
   
 
   return (

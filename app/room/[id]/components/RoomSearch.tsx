@@ -30,7 +30,7 @@ const RoomSearch = ({roomId,userId}:RoomSearchProps) => {
     const player=usePlayer()
     const play=useOnPlay(memoizedSongs)
      
-    console.log(songs)
+    // console.log(songs)
 
     const sendRequest=async(songId:string,songname:string)=>{
         if(!player.isHost){

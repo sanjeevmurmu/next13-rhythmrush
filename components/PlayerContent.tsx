@@ -25,10 +25,10 @@ interface PlayerContentProps {
   looptype:number
   setLoopType:Dispatch<SetStateAction<0|1|2>>
   startedAt:()=>void,
-  setPlaybackTime:(duration:number)=>void,
+  playbackTime:(duration:number)=>void,
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType,startedAt,setPlaybackTime}) => {
+const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,setLoopType,startedAt,playbackTime}) => {
   const player = usePlayer();
   const [volume, setVolume] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -81,6 +81,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     onplay: () => {
       setIsLoading(false);
       setIsPlaying(true);
+      startedAt()
+      if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))
           },
     onend: () => {
       setIsPlaying(false);
@@ -120,15 +122,15 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     if (!isPlaying && !player.roomsongisplaying) {
       play();
       if(player.isHost) {
-        startedAt()
         player.setRoomSongIsPlaying(true)
+        startedAt()
+
       }
-      if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))
     } else {
       if(player.isHost) 
         {
         player.setRoomSongIsPlaying(false)
-        setPlaybackTime(currentTime)
+        playbackTime(currentTime)
         // console.log(setPlaybackTime(currentTime))  
         }
       pause();

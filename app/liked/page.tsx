@@ -9,7 +9,7 @@ import { Song } from "@/types";
 export const revalidate = 0;
 
 const Liked = async () => {
-  const songs:Song[] = /*await getLikedSongs()*/ [];
+  const songs:Song[] = await getLikedSongs();
 
   return (
     <div 

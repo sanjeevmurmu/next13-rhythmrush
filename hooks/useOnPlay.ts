@@ -27,8 +27,10 @@ const useOnPlay = (songs: Song[]) => {
     // }
 
     player.setId(playingid)
-  
+
+    
     let allsongs=songs.map((song)=>song.id)
+    // console.log(allsongs.indexOf(playingid),'index')
     let prevsongs=allsongs.slice(0,allsongs.indexOf(playingid)+1).reverse()
     let nextsongs=allsongs.slice(allsongs.indexOf(playingid)+1,allsongs.length)
     allsongs=prevsongs.concat(nextsongs)  

@@ -5,7 +5,7 @@ import getUserDetails from "@/actions/getUserDetails";
 import { UserDetails } from "@/types";
 
 const Account = async() => {
-  const userDetail:UserDetails = /*await getUserDetails()*/{id:'random'};
+  const userDetail:UserDetails = await getUserDetails();
   // console.log(userDetail)
 
   return (
