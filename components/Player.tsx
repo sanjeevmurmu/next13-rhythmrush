@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState,useCallback} from "react";
+import { useEffect, useState,useCallback, useMemo} from "react";
 
 import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
@@ -23,17 +23,18 @@ const Player = () => {
 
   const player = usePlayer();
   const { song } = useGetSongById(player.activeId);
-  const { songs } =useGetSongByIds(player.queue)
+  const memoizedSongs=useMemo(()=>player.queue,[player.queue])
+  const { songs } =useGetSongByIds(memoizedSongs)
   const{updateCurrentRoomQueue,
         updateCurrentSonginRoom,
         updatePlaybackStatusinRoom,
         updateSongStartedAtinRoom,error}=useRooms()
 
-
-  
+        
+        
   const songUrl = useLoadSongUrl(song!);
 
-  // console.log(songs)
+  console.log(memoizedSongs,songs)
 
   const [looptype, setLoopType] = useState<LoopType>(0);
   const [orderedSongs,setOrderedSongs]=useState(songs)

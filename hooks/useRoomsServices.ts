@@ -162,7 +162,10 @@ export function useRooms() {
       if(!roomId || !id || !list) return
       const {data,error}=await supabaseClient.from('rooms').update([{
         'current_song_id':id,
-        'queue':list
+        'queue':list,
+        'current_song_started_at':0,
+        'is_playing':false,
+        'accumulated_playback_time':0,
       }]).eq('id',roomId)
       
       if(error) {
