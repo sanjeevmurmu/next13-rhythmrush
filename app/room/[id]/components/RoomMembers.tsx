@@ -222,15 +222,15 @@ const RoomMembers = ({members,userId,room}:RoomMembersProps) => {
                             src={item.requested_by?.avatar_url||'/images/Avatar.png'}
                             alt="avatar"
                             />
-                            <div className="flex flex-col space-y-2">
-                            <h3>{item.requested_by?.full_name}</h3>
-                            <h3>{item.song.title}</h3>
+                            <div className="flex flex-col justify-end">
+                            <p className="mb-0">{item.requested_by?.full_name}</p>
+                            <p>{item.song.title}</p>
                             </div>
                         </div>
-                    {player.isHost && <div className="flex space-x-2">
+                    {player.isHost ? (<div className="flex space-x-2">
                     <Button className="flex bg-emerald-600 w-max h-8 p-3 rounded-md hover:bg-lime-300 items-center" onClick={()=>respondRequests(item.id,'accept',item.song.id)}>Add to Queue</Button> 
                     <Button className="flex bg-emerald-600 w-max h-8 p-3 rounded-md hover:bg-lime-300 items-center" onClick={()=>respondRequests(item.id,'decline',item.song.id)}>Decline</Button> 
-                    </div>
+                    </div>):(<Button className="flex bg-emerald-600 w-max h-8 p-3 rounded-md hover:bg-lime-300 items-center">{item.status}</Button>)
                     }
                   </div>  
                 ))

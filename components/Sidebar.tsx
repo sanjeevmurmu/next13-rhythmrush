@@ -36,7 +36,7 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
     {
       icon: HiHome,
       label: 'Home',
-      active: pathname !== '/search',
+      active: pathname === '/',
       href: '/'
     },
     {
@@ -55,7 +55,7 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
       return authModal.onOpen();
     }
 
-    if(pathname === '/room'){
+    if(pathname.includes('/room')){
       return toast.error("You are already in a room leave it to join a new one");
     }
 
@@ -104,7 +104,7 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
                 transition
                 text-neutral-400
                 py-1`,
-                roomModal.isOpen && "text-white"
+                pathname.includes('room') && "text-white"
               )
               }
               onClick={onClick}
