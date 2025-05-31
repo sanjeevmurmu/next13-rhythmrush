@@ -78,8 +78,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
   const [play, { pause, sound, duration }] = useSound(songUrl, {
     volume: volume,
-    onplay: () => {
+    onload:()=>{
       setIsLoading(false);
+    },
+    onplay: () => {
       setIsPlaying(true);
       startedAt()
       if(player.start>0) setCurrentTime(player.playback+((Date.now()-player.start)/1000))
@@ -95,17 +97,41 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
     format: ["mp3"],
   });
 
-  useEffect(()=>{
-    if(player.roomsongisplaying){
-        play()
-      } 
-    else{
-      pause()
-    } 
-  },[player.roomsongisplaying])
+ useEffect(() => {
+  if (!sound) return;
+
+  // AUTO-PLAY CONDITIONS
+  const isInRoom = !!player.roomId;
+  const isHost = player.isHost;
+  const isSolo = !isInRoom;
+  if (isSolo) {
+    sound.seek(currentTime);
+    play();
+    startedAt(); // optional
+  } else if (isHost && player.roomsongisplaying) {
+    sound.seek(currentTime);
+    play();
+    startedAt(); // optional
+  } else if (!isHost && player.roomsongisplaying) {
+    const hostPlayback = player.playback + (Date.now() - player.start) / 1000;
+    sound.seek(hostPlayback);
+    sound.play();
+    setCurrentTime(hostPlayback);
+  }
+
+}, [sound]);
+
+
+
 
   useEffect(() => {
-    sound?.play();
+  if (!player.isHost) {
+    setCurrentTime(player.playback); // when host sends updated time
+  }
+}, [player.playback]);
+
+
+  useEffect(() => {
     if(sound){
       // console.log(sound)
       setAudio(sound._sounds[0]._node);
@@ -118,24 +144,24 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl,looptype,se
 
 
   const handlePlay = () => {
-    // console.log(sound);
-    if (!isPlaying && !player.roomsongisplaying) {
-      play();
-      if(player.isHost) {
-        player.setRoomSongIsPlaying(true)
-        startedAt()
+    if (!sound) return;
 
-      }
-    } else {
-      if(player.isHost) 
-        {
-        player.setRoomSongIsPlaying(false)
-        playbackTime(currentTime)
-        // console.log(setPlaybackTime(currentTime))  
-        }
-      pause();
+  if (!isPlaying && !player.roomsongisplaying) {
+    sound.seek(currentTime); // ✅ seek before play
+    play();
+    if (player.isHost) {
+      player.setRoomSongIsPlaying(true);
+      startedAt();
     }
-  };
+  } else {
+    if (player.isHost) {
+      player.setRoomSongIsPlaying(false);
+      playbackTime(currentTime);
+    }
+    pause();
+  }
+  }
+  
 
   const toggleMute = () => {
     if (volume === 0) {

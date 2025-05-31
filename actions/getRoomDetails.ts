@@ -4,6 +4,10 @@ import { cookies } from "next/headers";
 
 
 const getRoomDetails = async (id: string) => {
+
+  if(!id) return
+
+
   const supabase = createServerComponentClient({
     cookies: cookies
   });
@@ -29,7 +33,7 @@ const getRoomDetails = async (id: string) => {
     .in('id', users)
 
   if (error) {
-    console.log('[Server]',error.message);
+    console.log('[Server-room-details]',error.message);
   }
   console.log('get',roommembers,users)
 

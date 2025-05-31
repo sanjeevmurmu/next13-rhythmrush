@@ -12,7 +12,7 @@ interface PlayerStore extends RoomPlayerContext{
 
 interface RoomPlayerContext{
   roomsongisplaying:boolean;
-  roomId?:string;
+  roomId?:string|null;
   start:number
   playback:number;
   isHost:boolean;
@@ -29,12 +29,12 @@ const usePlayer = create<PlayerStore>((set) => ({
   queue: [],
   isHost:true,
   playback:0,
-  roomId:undefined,
+  roomId:null,
   roomsongisplaying:false,
   start:0,
   setId: (id: string) => set({ activeId: id }),
   setQueue: (list: string[]) => set({ queue:list}),
-  reset: () => set({queue:[],activeId:undefined,isHost:true,playback:0,roomId:undefined,start:0,roomsongisplaying:false}),
+  reset: () => set({queue:[],activeId:undefined,isHost:true,playback:0,roomId:null,start:0,roomsongisplaying:false}),
   setIsHost:(val)=>set({isHost:val}),
   setStart:(val:number)=>set({start:val}),
   setPlayback:(val:number)=>set({playback:val}),

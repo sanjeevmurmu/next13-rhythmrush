@@ -86,14 +86,14 @@ const Player = () => {
     return null;
   }
   
-
+const shouldShowPlayer = !player.roomId && !!player.activeId 
 
 let allSongs = looptype === 1 
     ? orderedSongs.filter(song => song.id === player.activeId)
     : orderedSongs;
 
   return (
-    <>
+    shouldShowPlayer && <>
     <QueueMenu allSongs={allSongs} activeId={player.activeId} onReorder={onReorder} host={player.isHost} />   
     <PlayerContent key={songUrl} song={song} songUrl={songUrl} looptype={looptype} setLoopType={setLoopType} startedAt={songStarted} playbackTime={updatePlayback} />
     </>

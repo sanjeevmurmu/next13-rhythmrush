@@ -25,7 +25,7 @@ const getSongs = async (limit = 0): Promise<Song[]> => {
       songData = data as Song[]
     }
   } catch (error) {
-    console.log('[Server-songs]',error);
+    console.log('[Server-getsongs]',error);
   }
 
 

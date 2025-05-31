@@ -175,7 +175,8 @@ export function useRooms() {
   }
 
   const updateCurrentRoomQueue=async(ids:string[],roomId?:string,)=>{
-        if(!roomId || !ids) return   
+        if(!roomId || !ids) return
+           
         const {data,error}=await supabaseClient.from('rooms').update([{
           'queue':ids
         }]).eq('id',roomId)
@@ -189,21 +190,24 @@ export function useRooms() {
 
   const updateSongStartedAtinRoom=async(time:number,roomId?:string)=>{
       if(!roomId) return
-        const {data,error}=await supabaseClient.from('rooms').update([{
-          'current_song_started_at':time,
-          'is_playing':true
-        }]).eq('id',roomId)
-        if(error) 
-          {
-            console.log('song_start',error.message)
-            setError(error.message)
-          } 
+
+      const {data,error}=await supabaseClient.from('rooms').update([{
+        'current_song_started_at':time,
+        'is_playing':true
+      }]).eq('id',roomId)
+      if(error) 
+        {
+          console.log('song_start',error.message)
+          setError(error.message)
+        } 
       }
   
 
   const updatePlaybackStatusinRoom=async(duration:number,roomId?:string)=>{
       
     console.log(duration,roomId)
+    if(!roomId) return
+
     const {data,error}=await supabaseClient.from('rooms').update([{
         'accumulated_playback_time':duration,
         'is_playing':false
